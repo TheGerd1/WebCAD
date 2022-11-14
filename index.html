@@ -1,33 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
+   <title>MDT</title>
 <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
  <meta charset="utf-8">
- <meta name="viewport" content"width=device-width">
- <title>MDT</title>
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <style>
+   *{box-sizing: border-box;
+   }
+   body {
+      margin: 0;
+   }
+   .header {
+     background-color:#f1f1f1;
+     padding: 20px;
+     text-align: center;
+   }
+   .column{
+   float: left;
+   width: 50%;
+   padding: 50px;
+   text-align: left;
+   border-right-style: solid;
+   }
+   .row:after {
+     content: "";
+     display: table;
+     clear: both;
+   }
+  </style>
 </head>
 <body>
+<div class="header">
+ <h1>DISPATCH DATABSE</h1>
+</div>
 
-<h2>DISPATCH DATABSE</h2>
-
-<form action="/Dispatch">
-  <label for="callsign">Callsign:</label><br>
-  <input type="text" id="callsign" name="callsign"><br>
-  <label for="status">Select status:</label><br>
-  <select name="status" id="status">
-  	<option value="Available">Available</option>
-    <option value="Busy">Busy</option>
-    <option value="Unavailable">Unavailable</option>
-    <option value="Traffic Stop">Traffic Stop</option>
-    <option value="Scene">Scene</option>
-    <option value="Radar">Radar</option>
-    <option value="Game Crash">Game Crash</option>
-  </select><br>
-  <label for="postal">Nearest Postal:</label><br>
-  <input type="text" id="postal" name="postal"><br>
-  <button onclick="addRow()">ADD</button>
-</form> <br><br>
-
+<div class="row">
+   <div class="column">
+    <form action="/Dispatch">
+      <label for="callsign">Callsign:</label><br>
+      <input type="text" id="callsign" name="callsign"><br>
+      <label for="status">Select status:</label><br>
+      <select name="status" id="status">
+      	<option value="Available">Available</option>
+        <option value="Busy">Busy</option>
+        <option value="Unavailable">Unavailable</option>
+        <option value="Traffic Stop">Traffic Stop</option>
+        <option value="Scene">Scene</option>
+        <option value="Radar">Radar</option>
+        <option value="Game Crash">Game Crash</option>
+    </select><br>
+    <label for="postal">Nearest Postal:</label><br>
+    <input type="text" id="postal" name="postal"><br>
+    <button onclick="addRow()">ADD</button>
+  </form> <br><br>
+</div>
+   
+<div class="column">
 <table border="1" id="Units">
  <thead>
  	<tr>
@@ -36,9 +65,11 @@
      <th>Location</th>
     </tr>
  </thead>
-  <tbody id="screen">
+ <tbody id="screen">
 </table>
-  
+</div>
+</div>
+
 </body>
   
  <script>
