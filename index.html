@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html>
+<head>
+<script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+ <meta charset="utf-8">
+ <meta name="viewport" content"width=device-width">
+ <title>JS Bin</title>
+</head>
 <body>
 
 <h2>TITLE</h2>
@@ -20,10 +26,36 @@
   <label for="postal">Nearest Postal:</label><br>
   <input type="text" id="postal" name="postal"><br>
   <input type="submit" value="Submit">
-</form> 
+</form> <br><br>
+
+<table border="1" id="Units">
+ <thread>
+ 	<tr>
+     <th>Callsign</th>
+     <th>Status</th>
+     <th>Location</th>
+    </tr>
+    <tr>
+     
+ </thread>
+</table>
 
 
 
 </body>
+ <script>
+    $( document ).ready(function(){
+      $('#screen').html(localStorage.getItem("data"));
+      
+    });
+    function addRow(){
+      var str = '<tr class = "boxType"><td>'+$('#one').val()+'</td>\
+  <td>'+$('#two').val()+'</td>\
+  <td>'+$('#three').val()+'</td>\
+</tr>'
+      $('#screen').append(str);
+      localStorage.setItem("data", $('#screen').html());
+    }
+  </script>
 </html>
 
