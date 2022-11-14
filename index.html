@@ -25,7 +25,7 @@
   </select><br>
   <label for="postal">Nearest Postal:</label><br>
   <input type="text" id="postal" name="postal"><br>
-  <input type="submit" value="Submit">
+  <button onclick="addRow()">ADD</button>
 </form> <br><br>
 
 <table border="1" id="Units">
@@ -36,7 +36,7 @@
      <th>Location</th>
     </tr>
     <tr>
-     
+
  </thread>
 </table>
 
@@ -46,7 +46,7 @@
  <script>
     $( document ).ready(function(){
       $('#screen').html(localStorage.getItem("data"));
-      
+
     });
     function addRow(){
       var str = '<tr class = "boxType"><td>'+$('#one').val()+'</td>\
@@ -58,4 +58,3 @@
     }
   </script>
 </html>
-
