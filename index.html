@@ -10,7 +10,7 @@
 
 <h2>DISPATCH DATABSE</h2>
 
-<form action="/action_page.php">
+<form action="/Dispatch">
   <label for="callsign">Callsign:</label><br>
   <input type="text" id="callsign" name="callsign"><br>
   <label for="status">Select status:</label><br>
@@ -38,10 +38,9 @@
  </thead>
   <tbody id="screen">
 </table>
-
-
-
+  
 </body>
+  
  <script>
     $( document ).ready(function(){
       $('#screen').html(localStorage.getItem("data"));
