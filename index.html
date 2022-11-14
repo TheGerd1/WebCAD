@@ -15,6 +15,7 @@
      background-color:#f1f1f1;
      padding: 20px;
      text-align: center;
+     border-bottom-style: solid;
    }
    .column{
    float: left;
@@ -32,15 +33,15 @@
 </head>
 <body>
 <div class="header">
- <h1>DISPATCH DATABSE</h1>
+ <h1>DISPATCH DATABASE</h1>
 </div>
 
 <div class="row">
    <div class="column">
-    <form action="/Dispatch">
+    <form action="/Dispatch" style="text-align:right;">
       <label for="callsign">Callsign:</label><br>
       <input type="text" id="callsign" name="callsign"><br>
-      <label for="status">Select status:</label><br>
+      <label for="status style="text-align:left;"">Select status:</label><br>
       <select name="status" id="status">
       	<option value="Available">Available</option>
         <option value="Busy">Busy</option>
@@ -50,7 +51,7 @@
         <option value="Radar">Radar</option>
         <option value="Game Crash">Game Crash</option>
     </select><br>
-    <label for="postal">Nearest Postal:</label><br>
+    <label for="postal" style="text-align:left;">Nearest Postal:</label><br>
     <input type="text" id="postal" name="postal"><br>
     <button onclick="addRow()">ADD</button>
   </form> <br><br>
