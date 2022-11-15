@@ -6,15 +6,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>MDT</title>
-<script type="text/javascript">
+  <script type="text/javascript">
     $(document).ready(function() {
     $("#clone").on("click", function() {
-      $("#LEO").append($("#LEO").find("#LEORow").clone().removeAttr("id").find("input").val("").end().find("input:checked").attr("checked", false).end());
-      
-    });
+    $("#LEO").append($("#LEO").find("#LEORow").clone().removeAttr("id").find("input").val("").end().find("input:checked").attr("checked", false).end());  
+  });
 });
 
-  </script>
+</script>
   
 <script type="text/javascript">
     $(document).ready(function() {
@@ -22,49 +21,47 @@
       $("#Fire").append($("#Fire").find("#FDRow").clone().removeAttr("id").find("input").val("").end().find("input:checked").attr("checked", false).end());
       
     });
-});
+  });
 
-  </script>
-  <style>
-     *{box-sizing: border-box;
-   }
+</script>
+<style>
+   *{box-sizing: border-box;}
    body {
       margin: 0;
       text-align: center;
       padding: 50px;
- 
    }
+    
    .header {
      background-color:#f1f1f1;
      padding: 20px;
      text-align: center;
      border-bottom-style: solid;
    }
-    .center {
-  margin-left: auto;
-  margin-right: auto;
-}
-    .column{
-      float: left;
-      width: 50%;
-      padding: 15px;
-      text-align: center;
+   .center {
+     margin-left: auto;
+     margin-right: auto;
+   }
+   .column{
+     float: left;
+     width: 50%;
+     padding: 15px;
+     text-align: center;
       
-    } 
-    .row:after {
-      content: "";
-      display: table;
-      clear: both;
-    }
+   } 
+   .row:after {
+     content: "";
+     display: table;
+     clear: both;
+   }
     
-    h2{
-      border-bottom-style: solid;
-    }
-  
-    </style>
+   h2{
+     border-bottom-style: solid;
+   }
+</style>
   
 </head>
- <body style="font-size:200%;">
+<body style="font-size:200%;">
  
 <div class="header">
   <h1>DISPATCH DATABASE</h1>
@@ -76,70 +73,70 @@
 
     <h2>LAW ENFORCEMENT</h2>
     <form action="/Dispatch" style="text-align:center;"> 
-    <table class="center" border="0" id="PD" >
-      <thead>
-      <tr>
-        <th>Callsign</th>
-        <th>Status</th>
-        <th>Location</th>
-        <th>License</th>
-        <th>71</th>
-      </tr>
-       </thead>
-       <tbody id="LEO">
-    <tr id="LEORow">
+      <table class="center" border="0" id="PD" >
+        <thead>
+          <tr>
+            <th>Callsign</th>
+            <th>Status</th>
+            <th>Location</th>
+            <th>License</th>
+            <th>71</th>
+          </tr>
+      </thead>
+      <tbody id="LEO">
+      <tr id="LEORow">
         <td><input type="text" id="callsign" name="callsign" size="5"></td>
         <td><select name="status" id="status">
           <option value="Available">Available</option>
-        <option value="Busy">Busy</option>
-        <option value="Unavailable">Unavailable</option>
-        <option value="Traffic Stop">Traffic Stop</option>
-        <option value="Scene">Scene</option>
-        <option value="Radar">Radar</option>
-        <option value="Game Crash">Game Crash</option></select></td>
-      <td> <input type="text" id="postal" name="postal" size="8"></td>
-          <td><input type="text" id="license" name="license" size="8"></td>
-       <td><input type="checkbox" id="sup"></td>
-   </tr>
- <input type="reset">  
- <input type="button" value="New Row" id="clone"/>
-      </table>
- </form>
+          <option value="Busy">Busy</option>
+          <option value="Unavailable">Unavailable</option>
+          <option value="Traffic Stop">Traffic Stop</option>
+          <option value="Scene">Scene</option>
+          <option value="Radar">Radar</option>
+          <option value="Game Crash">Game Crash</option></select></td>
+        <td> <input type="text" id="postal" name="postal" size="8"></td>
+        <td><input type="text" id="license" name="license" size="8"></td>
+        <td><input type="checkbox" id="sup"></td>
+      </tr>
+    <input type="reset">  
+    <input type="button" value="New Row" id="clone"/>
+  </table>
+</form>
  
- </div>
- 
- <div class="column">
-   <h2>FIRE AND EMS</h2>
-   <form action="/Dispatch" style="text-align:center;">
-     <table class="center" border="0" id="Fire">
-       <thead>
-         <tr>
-           <th>Callsign</th>
-           <th>Status</th>
-           <th>Location</th>
-           <th>10-71</th>
-           <th>Crew</th>
-         </tr>
-         <tbody id="FD">
-         <tr id="FDRow">
-           <td><input type="text" id="callsign" name="callsign" size="5"></td>
-           <td><select name="status" id="status">
-          <option value="Available">Available</option>
-        <option value="Busy">Busy</option>
-        <option value="Unavailable">Unavailable</option>
-        <option value="Traffic Stop">Traffic Stop</option>
-        <option value="Scene">Scene</option>
-        <option value="Radar">Radar</option>
-        <option value="Game Crash">Game Crash</option></select></td>
-           <td> <input type="text" id="postal" name="postal" size="8"></td>
-       <td><input type="checkbox" id="sup"></td>
-            <td><input type="text" id="crew" size="1" style="text-align:center;"></td>
-           </tr>
-      <input type="reset">  
-      <input type="button" value="New Row" id="fireclone"/>
-     </table>
 </div>
-  </div>
-  
-</body>
+ 
+<div class="column">
+  <h2>FIRE AND EMS</h2>
+    <form action="/Dispatch" style="text-align:center;">
+      <table class="center" border="0" id="Fire">
+        <thead>
+          <tr>
+            <th>Callsign</th>
+            <th>Status</th>
+            <th>Location</th>
+            <th>10-71</th>
+            <th>Crew</th>
+          </tr>
+          <tbody id="FD">
+            <tr id="FDRow">
+              <td><input type="text" id="callsign" name="callsign" size="5"></td>
+              <td><select name="status" id="status">
+                <option value="Available">Available</option>
+                <option value="Busy">Busy</option>
+                <option value="Unavailable">Unavailable</option>
+                <option value="Traffic Stop">Traffic Stop</option>
+                <option value="Scene">Scene</option>
+                <option value="Radar">Radar</option>
+                <option value="Game Crash">Game Crash</option></select>
+              </td>
+              <td> <input type="text" id="postal" name="postal" size="8"></td>
+              <td><input type="checkbox" id="sup"></td>
+              <td><input type="text" id="crew" size="1" style="text-align:center;"></td>
+            </tr>
+          <input type="reset">  
+          <input type="button" value="New Row" id="fireclone"/>
+        </table>
+      </div>
+    </div>
+  </body>
 </html>
