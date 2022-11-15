@@ -56,19 +56,25 @@
       display: table;
       clear: both;
     }
+    
+   
+  
     </style>
   
 </head>
  <body style="font-size:100%;">
+ 
 <div class="header">
   <h1>DISPATCH DATABASE</h1>
 </div>
 
 <div class="row">
-  <div class="column">
+
+  <div class="column" >
+
     <h2>LAW ENFORCEMENT</h2>
     <form action="/Dispatch" style="text-align:center;"> 
-    <table class="center" border="0" id="PD">
+    <table class="center" border="0" id="PD" >
       <thead>
       <tr>
         <th>Callsign</th>
@@ -97,8 +103,9 @@
  <input type="button" value="New Row" id="clone"/>
       </table>
  </form>
+ 
  </div>
-    
+ 
  <div class="column">
    <h2>FIRE AND EMS</h2>
    <form action="/Dispatch" style="text-align:center;">
@@ -126,13 +133,11 @@
        <td><input type="checkbox" id="sup"></td>
             <td><input type="text" id="crew" size="1" style="text-align:center;"></td>
            </tr>
-          
-          
-<input type="reset">  
-<input type="button" value="New Row" id="fireclone"/>
+      <input type="reset">  
+      <input type="button" value="New Row" id="fireclone"/>
      </table>
-
 </div>
   </div>
+  
 </body>
 </html>
