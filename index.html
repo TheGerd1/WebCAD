@@ -15,7 +15,13 @@
 });
 
   </script>
-  
+  <script>
+   jQuery(document).ready(function(){
+    jQuery('#answer').on('click', function(event) {        
+        jQuery('#toggle').toggle('show');
+    });
+});
+  </script>
 <script type="text/javascript">
     $(document).ready(function() {
     $("#fireclone").on("click", function() {
@@ -60,10 +66,18 @@
     h2{
       border-bottom-style: solid;
     }
-  
+    .answer_list{
+      float: top;
+      background-color: red;
+      color: white;
+    }
     </style>
   
 </head>
+ <div class="answer_list" id="toggle" style="display:none">
+   <h1>SIGNAL 100</h1>
+  </div>
+  <input type="button" name="answer" id="answer" value="SIGNAL 100" onclick="ShowDiv('toggle')"/>
  <body style="font-size:200%;">
  
 <div class="header">
