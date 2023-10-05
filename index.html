@@ -5,31 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CAD System</title>
     <style>
+    input[type=text], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=button] {
+   background-color: #04AA6D;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+ .item {
+    background-color: #444;
+    color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+  }
+    .item .item {
+    background-color: #ccc;
+    color: #444;
+  }
+.a {   grid-column: col / span 4;
+    grid-row: row; }
+.b { grid-column: col / span 4;
+    grid-row: row 2;
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1fr 1fr;}
+.c { grid-column: 1;
+    grid-row: 1   }
+.d { grid-column: 2;
+    grid-row: 1   }
+.e { grid-column: 1;
+    grid-row: 2; }
+.f {  grid-column: 2;
+    grid-row: 2; }
+
+
+.grid-container {
+  display: grid;
+  grid-template-columns: (4, [col] 150px );
+  grid-template-rows: (2, [row] auto  );
+  gap: 10px;
+  background-color: #fff;
+  padding: 10px;
+}
+
         .call-details {
             display: none;
-        }
-        #parent {
-            display: flex;
-        }
-        #narrow {
-            width: 500px;
-            background: lightblue;
-        }
-        #wide {
-            flex: 1;
-            background: lightgreen;
-        }
-        .form-section {
-            width: 50%;
-            float: left;
-            margin-right: 20px;
-        }
-        .form-section label,
-        .form-section input,
-        .form-section select,
-        .form-section button {
-            display: block;
-            margin-bottom: 10px;
         }
         .call-table, .unit-table {
             width: 100%;
@@ -37,31 +73,31 @@
         }
         .call-table th, .call-table td, .unit-table th, .unit-table td {
             padding: 8px;
-            border: 1px solid #ccc;
+            border: 1px solid black;
             text-align: left;
         }
-        .form-section label {
-            width: 100px;
-            float: left;
-            margin-right: 10px;
+     
+  
+        .table-container {
+            display: flex;
+            align-items: flex-start;
         }
-        .form-section input,
-        .form-section textarea {
-            width: 100%;
-        }
-        .form-section::after {
-            content: "";
-            display: table;
-            clear: both;
+        .table-container > section {
+            flex: 1;
+            margin-right: 20px;
         }
     </style>
 </head>
 <body>
+ <div class="grid-container">
+<div class="item a">
     <header>
         <h1>Computer-Aided Dispatch System</h1>
     </header>
-    <div id="parent">
-        <div id="wide">
+    </div>
+   <div class="item b">
+
+        <div class="item c">
             <section class="form-section" id="new-call">
                 <h2>Create New Call</h2>
                 <form id="call-form">
@@ -71,8 +107,8 @@
                     <label for="primary-unit">Primary Unit:</label>
                     <select id="primary-unit" name="primary-unit" required></select>
                     
-                    <label for="location">Location:</label>
-                    <input type="text" id="location" name="location" required>
+                    <label for="location">Postal Code:</label>
+                    <input type="number" id="location" name="location" required>
                     
                     <label for="description">Description:</label>
                     <textarea id="description" name="description" rows="4" required></textarea>
@@ -80,6 +116,8 @@
                     <button type="button" onclick="createCall()">Create Call</button>
                 </form>
             </section>
+               </div>
+               <div class="item e">
             <section id="display-call-info">
                 <table class="call-table">
                     <thead>
@@ -94,7 +132,7 @@
                 </table>
             </section>
         </div>
-        <div id="narrow">
+         <div class="item d">
             <section class="form-section" id="unit-section">
                 <h2>Create New Unit</h2>
                 <form id="unit-form">
@@ -114,8 +152,9 @@
                     <button type="button" onclick="createUnit()">Create Unit</button>
                 </form>
             </section>
+            </div>
+               <div class="item f">
             <section id="display-unit-info">
-                <h2>Unit Information</h2>
                 <table class="unit-table">
                     <thead>
                         <tr>
@@ -127,6 +166,7 @@
                     <tbody id="unit-info"></tbody>
                 </table>
             </section>
+        </div>
         </div>
     </div>
     <script>
