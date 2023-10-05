@@ -4,48 +4,161 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CAD System</title>
+    <style>
+        .call-details {
+            display: none;
+        }
+
+        .form-section {
+            width: 50%;
+            float: left;
+            margin-right: 20px;
+        }
+
+        .form-section label,
+        .form-section input,
+        .form-section select,
+        .form-section button {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .call-table, .unit-table {
+            width: 100%;
+            clear: both;
+        }
+
+        .call-table th, .call-table td, .unit-table th, .unit-table td {
+            padding: 8px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
     <header>
         <h1>Computer-Aided Dispatch System</h1>
     </header>
-    
-    <section id="login">
-        <h2>Login</h2>
-        <form action="login.php" method="post">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required><br>
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required><br>
-
-            <button type="submit">Login</button>
-        </form>
-    </section>
-
-    <section id="dispatch">
-        <h2>Dispatch Panel</h2>
-        <!-- Display dispatched calls and units here -->
-    </section>
-
-    <section id="new-call">
+    <section class="form-section" id="new-call">
         <h2>Create New Call</h2>
-        <form action="create_call.php" method="post">
-            <label for="caller">Caller Name:</label>
-            <input type="text" id="caller" name="caller" required><br>
+        <form id="call-form">
+            <label for="call-number">Call Number:</label>
+            <input type="text" id="call-number" name="call-number" required>
+
+            <label for="primary-unit">Primary Unit:</label>
+            <input type="text" id="primary-unit" name="primary-unit" required>
 
             <label for="location">Location:</label>
-            <input type="text" id="location" name="location" required><br>
+            <input type="text" id="location" name="location" required>
 
             <label for="description">Description:</label>
-            <textarea id="description" name="description" rows="4" required></textarea><br>
+            <textarea id="description" name="description" rows="4" required></textarea>
 
-            <button type="submit">Create Call</button>
+            <button type="button" onclick="createCall()">Create Call</button>
         </form>
     </section>
-    
-    <footer>
-        <p>&copy; 2023 CAD System</p>
-    </footer>
+
+    <section class="form-section" id="unit-section">
+        <h2>Create New Unit</h2>
+        <form id="unit-form">
+            <label for="callsign">Callsign:</label>
+            <input type="text" id="callsign" name="callsign" required>
+
+            <label for="supervisor">Supervisor:</label>
+            <input type="checkbox" id="supervisor" name="supervisor">
+
+            <label for="status">Status:</label>
+            <select id="status" name="status">
+                <option value="10-8">10-8</option>
+                <option value="10-6">10-6</option>
+                <option value="10-7">10-7</option>
+            </select>
+
+            <button type="button" onclick="createUnit()">Create Unit</button>
+        </form>
+    </section>
+
+    <section id="display-call-info">
+        <h2>Call Information</h2>
+        <table class="call-table">
+            <thead>
+                <tr>
+                    <th>Call Number</th>
+                    <th>Primary Unit</th>
+                    <th>Location</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody id="call-info"></tbody>
+        </table>
+    </section>
+
+    <section id="display-unit-info">
+        <h2>Unit Information</h2>
+        <table class="unit-table">
+            <thead>
+                <tr>
+                    <th>Callsign</th>
+                    <th>Supervisor</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="unit-info"></tbody>
+        </table>
+    </section>
+
+    <script>
+        function createCall() {
+            // Get values from the call form
+            const callNumber = document.getElementById('call-number').value;
+            const primaryUnit = document.getElementById('primary-unit').value;
+            const location = document.getElementById('location').value;
+            const description = document.getElementById('description').value;
+
+            // Create a table row with the call information
+            const callRow = `
+                <tr>
+                    <td>${callNumber}</td>
+                    <td>${primaryUnit}</td>
+                    <td>${location}</td>
+                    <td>${description}</td>
+                </tr>
+            `;
+
+            // Append the call information to the "Call Information" table
+            document.getElementById('call-info').innerHTML += callRow;
+
+            // Clear the call form fields for the next entry
+            document.getElementById('call-number').value = '';
+            document.getElementById('primary-unit').value = '';
+            document.getElementById('location').value = '';
+            document.getElementById('description').value = '';
+        }
+
+        function createUnit() {
+            // Get values from the unit form
+            const callsign = document.getElementById('callsign').value;
+            const supervisor = document.getElementById('supervisor').checked ? 'Supervisor' : 'Not Supervisor';
+            const status = document.getElementById('status').value;
+
+            // Create a table row with the unit information
+            const unitRow = `
+                <tr>
+                    <td>${callsign}</td>
+                    <td>${supervisor}</td>
+                    <td>${status}</td>
+                </tr>
+            `;
+
+            // Append the unit information to the "Unit Information" table
+            document.getElementById('unit-info').innerHTML += unitRow;
+
+            // Clear the unit form fields for the next entry
+            document.getElementById('callsign').value = '';
+            document.getElementById('supervisor').checked = false;
+            document.getElementById('status').value = '10-8';
+        }
+    </script>
 </body>
 </html>
