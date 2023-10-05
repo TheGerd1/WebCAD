@@ -14,19 +14,40 @@
   border-radius: 4px;
   box-sizing: border-box;
 }
+textarea {  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;}
+  
+   input[type=number], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+input[type=checkbox] { 
+  margin: 15px 15px;
+  display: inline;
+}
 
-input[type=button] {
-   background-color: #04AA6D;
-  border: none;
+button {
+   background-color: #444;
+  border: 1px solid black;
   color: white;
-  padding: 16px 32px;
+  padding: 5px 5px;
   text-decoration: none;
   margin: 4px 2px;
   cursor: pointer;
 }
 
-input[type=submit]:hover {
-  background-color: #45a049;
+button:hover {
+  background-color: #ccc;
 }
  .item {
     background-color: #444;
@@ -141,7 +162,8 @@ input[type=submit]:hover {
                     
                     <label for="supervisor">Supervisor:</label>
                     <input type="checkbox" id="supervisor" name="supervisor">
-                    
+                    <br>
+<br>
                     <label for="status">Status:</label>
                     <select id="status" name="status">
                         <option value="10-8">10-8</option>
