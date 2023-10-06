@@ -76,7 +76,10 @@ button:hover {
 .f {  grid-column: 2;
     grid-row: 2; }
 
-
+ td[value="1"] {
+          color: green;
+        }
+        
 .grid-container {
   display: grid;
   grid-template-columns: (4, [col] 150px );
@@ -116,6 +119,7 @@ button:hover {
          .call-form-toggle {
             cursor: pointer;
         }
+
     </style>
 </head>
 <body>
@@ -270,9 +274,9 @@ function deleteRowu(r) {
                     <td>${callsign}</td>
                     <td>${supervisor}</td>
                     <td><select id="status" name="status" >
-                        <option value="1" data-sync="1">10-8</option>
-                        <option value="2" data-sync="2">10-6</option>
-                        <option value="3">10-7</option>
+                        <option value="1" data-sync="1"">🟢 10-8</option>
+                        <option value="2" data-sync="2">🟠 10-6</option>
+                        <option value="3">🟡 10-7</option>
                     </select></td>
                     <td>${notes}</td>
                     <td><select id="callNumberselect" name="callNumberselect" onchange="change();" required><option value="1">Unassigned</option></select></td>
@@ -302,7 +306,11 @@ function change() {
     document.getElementById("status").value = '2';
 };
 
+         
            
+       
+   
+
          
     </script>
 </body>
