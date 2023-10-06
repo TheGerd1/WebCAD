@@ -143,6 +143,7 @@ button:hover {
                     <select id="primary-unit" name="primary-unit" required></select>
                     </div>
 <br style="clear:both;" />
+
                     <label for="location">Postal Code:</label>
                     <input type="number" id="location" name="location" required>
                     
@@ -156,13 +157,14 @@ button:hover {
                </div>
                <div class="item e">
             <section id="display-call-info">
-                <table class="call-table">
+                <table class="call-table" id="call-table">
                     <thead>
                         <tr>
                             <th>Call Number</th>
                             <th>Primary Unit</th>
                             <th>Location</th>
                             <th>Description</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="call-info"></tbody>
@@ -183,12 +185,7 @@ button:hover {
                     </div>
                     <br style="clear:both;" />
 <br />
-                    <label for="status">Status:</label>
-                    <select id="status" name="status">
-                        <option value="10-8">10-8</option>
-                        <option value="10-6">10-6</option>
-                        <option value="10-7">10-7</option>
-                    </select>
+
                     <label for="notes">Notes:</label>
                     <textarea id="notes" name="notes" rows="2"></textarea>
                     <button type="button" onclick="createUnit()">Create Unit</button>
@@ -197,12 +194,15 @@ button:hover {
             </div>
                <div class="item f">
             <section id="display-unit-info">
-                <table class="unit-table">
+                <table class="unit-table" id="id-table">
                     <thead>
                         <tr>
                             <th>Callsign</th>
                             <th>Supervisor</th>
                             <th>Status</th>
+                            <th>Notes</th>
+                            <th>Assign</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="unit-info"></tbody>
@@ -212,8 +212,16 @@ button:hover {
         </div>
     </div>
     <script>
-  
-    
+        
+function deleteRowc(r) {
+  var i = r.parentNode.parentNode.rowIndex;
+  document.getElementById("call-table").deleteRow(i);
+}
+function deleteRowu(r) {
+  var i = r.parentNode.parentNode.rowIndex;
+  document.getElementById("id-table").deleteRow(i);
+}
+
    
         function createCall() {
             // Get values from the call form
@@ -228,7 +236,8 @@ button:hover {
                     <td>${callNumber}</td>
                     <td>${primaryUnit}</td>
                     <td>${location}</td>
-                    <td>${description}</td>
+                    <td>${description}</td>           
+										<td><input type="button" value="Delete Row" onclick="deleteRowc(this)"></td>
                 </tr>
             `;
             
@@ -240,20 +249,34 @@ button:hover {
             document.getElementById('primary-unit').value = '';
             document.getElementById('location').value = '';
             document.getElementById('description').value = '';
+            
+               const callNumberDropdown = document.getElementById('callNumberselect');
+        const option = document.createElement('option');
+        option.value = 2;
+        option.text = callNumber;
+        callNumberDropdown.appendChild(option);
         }
         
         function createUnit() {
             // Get values from the unit form
             const callsign = document.getElementById('callsign').value;
             const supervisor = document.getElementById('supervisor').checked ? 'Supervisor' : 'Not Supervisor';
-            const status = document.getElementById('status').value;
+     
+            const notes = document.getElementById('notes').value;
             
             // Create a table row with the unit information
             const unitRow = `
                 <tr>
                     <td>${callsign}</td>
                     <td>${supervisor}</td>
-                    <td>${status}</td>
+                    <td><select id="status" name="status" >
+                        <option value="1" data-sync="1">10-8</option>
+                        <option value="2" data-sync="2">10-6</option>
+                        <option value="3">10-7</option>
+                    </select></td>
+                    <td>${notes}</td>
+                    <td><select id="callNumberselect" name="callNumberselect" onchange="change();" required><option value="1">Unassigned</option></select></td>
+                    <td><input type="button" value="Delete Row" onclick="deleteRowu(this)"></td>
                 </tr>
             `;
             
@@ -263,7 +286,7 @@ button:hover {
             // Clear the unit form fields for the next entry
             document.getElementById('callsign').value = '';
             document.getElementById('supervisor').checked = false;
-            document.getElementById('status').value = '10-8';
+
             
             // Update the options in the "Primary Unit" dropdown
             const primaryUnitDropdown = document.getElementById('primary-unit');
@@ -272,6 +295,15 @@ button:hover {
             option.text = callsign;
             primaryUnitDropdown.appendChild(option);
         }
+function change() {
+  if (document.getElementById('callNumberselect').value == '1')
+    document.getElementById("status").value = '1';
+  else if (document.getElementById('callNumberselect').value == '2')
+    document.getElementById("status").value = '2';
+};
+
+           
+         
     </script>
 </body>
 </html>
