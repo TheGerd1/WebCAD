@@ -168,7 +168,7 @@ button:hover {
                             <th>Primary Unit</th>
                             <th>Location</th>
                             <th>Description</th>
-                            <th>Action</th>
+                            <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody id="call-info"></tbody>
@@ -237,10 +237,11 @@ function deleteRowu(r) {
             // Create a table row with the call information
             const callRow = `
                 <tr>
-                    <td>${callNumber}</td>
+                    <td><input type="text" value=${callNumber}></td>
                     <td>${primaryUnit}</td>
-                    <td>${location}</td>
-                    <td>${description}</td>           
+                    <td><input type="text" value=${location}></td>
+                    <td><textarea rows="2">${description}</textarea></td>   
+                    
 										<td><input type="button" value="Delete Row" onclick="deleteRowc(this)"></td>
                 </tr>
             `;
