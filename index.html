@@ -50,12 +50,60 @@ button {
 button:hover {
   background-color: #ccc;
 }
+ .homepage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #444;
+            color: #fff;
+        }
 
+        .homepage h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .homepage p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .homepage-buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .homepage-button {
+            background-color: #444;
+            border: 1px solid #fff;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 18px;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .homepage-button:hover {
+            background-color: #ccc;
+        }
 
     </style>
 </head>
 <body>
-   <button type="button" onclick="location.href='dispatch.html';">Dispatch</button>
+<div class="homepage">
+        <h1>Welcome to the CAD System</h1>
+        <p>Choose an option below:</p>
+        <div class="homepage-buttons">
+            <a href="dispatch.html" class="homepage-button">Dispatch</a>
+            <a href="records.html" class="homepage-button">Records</a>
+            <a href="admin.html" class="homepage-button">Admin</a>
+        </div>
+    </div>
+ 
 
 </body>
 </html>
