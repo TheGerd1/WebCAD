@@ -8,6 +8,4 @@ This will help me know what needs to be fixed or added
 # Contact me
 I am most easily contacted through my discord: https://discord.gg/8g8EQN8xJH
 
-# Releases
-There have been NO OFFICIAL RELEASES so far.
 
