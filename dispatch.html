@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +14,6 @@
         border-radius: 4px;
         box-sizing: border-box;
       }
-
       textarea {
         width: 100%;
         padding: 12px 20px;
@@ -25,7 +23,6 @@
         border-radius: 4px;
         box-sizing: border-box;
       }
-
       input[type=number] {
         width: 100%;
         padding: 12px 20px;
@@ -35,14 +32,12 @@
         border-radius: 4px;
         box-sizing: border-box;
       }
-
       input[type=checkbox] {
         margin: 15px 15px;
         display: block;
         width: 25px;
         height: 25px;
       }
-
       button {
         background-color: #444;
         border: 1px solid black;
@@ -52,28 +47,23 @@
         margin: 4px 2px;
         cursor: pointer;
       }
-
       button:hover {
         background-color: #ccc;
       }
-
       .item {
         background-color: #444;
         color: #fff;
         border-radius: 5px;
         padding: 20px;
       }
-
       .item .item {
         background-color: #ccc;
         color: #444;
       }
-
       .a {
         grid-column: col / span 4;
         grid-row: row;
       }
-
       .b {
         grid-column: col / span 4;
         grid-row: row 2;
@@ -81,31 +71,25 @@
         grid-gap: 10px;
         grid-template-columns: 1fr 1fr;
       }
-
       .c {
         grid-column: 1;
         grid-row: 1
       }
-
       .d {
         grid-column: 2;
         grid-row: 1
       }
-
       .e {
         grid-column: 1;
         grid-row: 2;
       }
-
       .f {
         grid-column: 2;
         grid-row: 2;
       }
-
       td[value="1"] {
         color: green;
       }
-
       .grid-container {
         display: grid;
         grid-template-columns: (4, [col] 150px);
@@ -114,19 +98,15 @@
         background-color: #fff;
         padding: 10px;
       }
-
       .call-details {
         display: none;
-
       }
-
       .call-table,
       .unit-table {
         width: 100%;
         clear: both;
         background-color: #fff;
       }
-
       .call-table th,
       .call-table td,
       .unit-table th,
@@ -134,29 +114,21 @@
         padding: 8px;
         border: 1px solid black;
         text-align: left;
-
       }
-
-
       .table-container {
         display: flex;
         align-items: flex-start;
         background-color: #fff;
       }
-
       .table-container>section {
         flex: 1;
         margin-right: 20px;
-
       }
-
       .call-form-toggle {
         cursor: pointer;
       }
-
     </style>
   </head>
-
   <body>
     <div class="grid-container">
       <div class="item a">
@@ -166,13 +138,10 @@
         </header>
       </div>
       <div class="item b">
-
         <div class="item c">
           <section class="form-section" id="new-call">
             <h2>Create New Call</h2>
             <div id="callform">
-
-
               <form id="call-form">
                 <div style="float:left;margin-right:20px;">
                   <label for="call-number">Call Number:</label>
@@ -183,13 +152,10 @@
                   <select id="primary-unit" name="primary-unit" required></select>
                 </div>
                 <br style="clear:both;" />
-
                 <label for="location">Postal Code:</label>
                 <input type="number" id="location" name="location" required>
-
                 <label for="description">Description:</label>
                 <textarea id="description" name="description" rows="4" required></textarea>
-
                 <button type="button" onclick="createCall()">Create Call</button>
               </form>
             </div>
@@ -225,8 +191,6 @@
                 <input type="checkbox" id="supervisor" name="supervisor">
               </div>
               <br style="clear:both;" />
-              <br />
-
               <label for="notes">Notes:</label>
               <textarea id="notes" name="notes" rows="2"></textarea>
               <button type="button" onclick="createUnit()">Create Unit</button>
@@ -255,31 +219,26 @@
     <script>
       const callRowIds = [];
       const unitRowIds = [];
-
       function deleteRowc(r) {
         var i = r.parentNode.parentNode.rowIndex;
         document.getElementById("call-table").deleteRow(i);
         // Remove the unitRowId from the callRowIds array
         const index = unitRowIds.indexOf(callRowId);
         if (index !== -1) {
-          callRowIds.splice(index, 1);
-         
+          callRowIds.splice(index, 1);    
         }
       }
-
       function deleteRowu(r, unitRowId) {
         var i = r.parentNode.parentNode.rowIndex;
         document.getElementById("id-table").deleteRow(i);
-
         // Remove the unitRowId from the unitRowIds array
         const index = unitRowIds.indexOf(unitRowId);
         if (index !== -1) {
-          unitRowIds.splice(index, 1);
-           
+          unitRowIds.splice(index, 1);   
         }
       }
-
      function createCall() {
+	        console.log("createCall() function called."); 
     // Get values from the call form
     const callNumber = document.getElementById('call-number').value;
     const primaryUnit = document.getElementById('primary-unit').value;
@@ -287,9 +246,7 @@
     const description = document.getElementById('description').value;
     // Create a unique ID for this unit row based on callsign
     const callRowId = `call-${callNumber}`;
-
     callRowIds.push(callRowId);
-  
     // Create a table row with the call information
     const callRow = `
              <tr id="${callRowId}">
@@ -298,144 +255,126 @@
                 <td><input type="text" value=${location}></td>
                 <td>Units</td>
                 <td><textarea rows="2">${description}</textarea></td>   
-                
                 <td><input type="button" value="Delete Row" onclick="deleteRowc(this)"></td>
             </tr>
         `;
-	
     // Append the call information to the "Call Information" table
     const callInfoTable = document.getElementById('call-info');
     if (callInfoTable) {
       callInfoTable.insertAdjacentHTML('beforeend', callRow);
+	           console.log("Call info appended");
     }
-
     // Clear the call form fields for the next entry
     document.getElementById('call-number').value = '';
     document.getElementById('primary-unit').value = '';
     document.getElementById('location').value = '';
     document.getElementById('description').value = '';
-	
-updatecallDropdowns()
+	        console.log("Call form fields cleared");
+  updatecallDropdowns()
+         console.log("CallDropdowns Updated");
+        console.log("createCall() function completed.");
  }
-
-
   function createUnit() {
+	   console.log("createUnit() function called."); 
     // Get values from the unit form
     const callsign = document.getElementById('callsign').value;
     const supervisor = document.getElementById('supervisor').checked ? 'Supervisor' : 'Not Supervisor';
     const notes = document.getElementById('notes').value;
-
     // Create a unique ID for this unit row based on callsign
     const unitRowId = `unit-${callsign}`;
-
     unitRowIds.push(unitRowId);
-    
-
-
+//callnumberselect element
+        const callnumberselect = `<select id="callnumberselect" class="callnumberselect" name="callnumberselect" required> <option disabled selected value> -- select an option -- </option></select>`;
+				// Status Select element
+        const statusselect = `<select class="statusSelect" name="statusSelect">
+         <option disabled selected value style=> -- select an option -- </option>
+      <option value="1" style="background-color: green;">🟢 10-8</option>
+      <option value="2" style="background-color: orange;">🟠 10-6</option>
+      <option value="3" style="background-color: yellow;">🟡 10-7</option>
+    </select>`;
     // Create a table row with the unit information, using the unique dropdown ID
     const unitRow = `
 <tr id="${unitRowId}">
   <td>${callsign}</td>
   <td>${supervisor}</td>
-  <td>
-    <select class="statusSelect" name="statusSelect">
-      <option value="1">🟢 10-8</option>
-      <option value="2">🟠 10-6</option>
-      <option value="3">🟡 10-7</option>
-    </select>
-  </td>
+  <td> ${statusselect}</td>
   <td>${notes}</td>
-  <td>
-    <select id="callnumberselect" class="callnumberselect" name="callnumberselect" onchange="change(this);" required>
-    </select>
-  </td>
+ <td>${callnumberselect}</td>
   <td><input type="button" value="Delete Row" onclick="deleteRowu(this, '${unitRowId}')"></td>
 </tr>
 `;
-
-	 
-    
-   
    // Check if the parent element where you want to append the row exists
     const unitInfoTable = document.getElementById('unit-info');
-    
-    
     if (unitInfoTable) {
     // Append the unit information to the "Unit Information" table
     unitInfoTable.innerHTML += unitRow;
-
-  
-
-      
-    
     // Clear the unit form fields for the next entry
     document.getElementById('callsign').value = '';
     document.getElementById('supervisor').checked = false;
     document.getElementById('notes').value = '';
   }
-
-  updatecallDropdowns();
+   updatecallDropdowns();
+         console.log("CallDropdowns Updated");
+         console.log("createUnit() function completed.");
 }
-
 var selects = document.querySelectorAll(".callnumberselect");
+	      console.log("var select start");
 for (var i = 0; i < callRowIds.length; i++) {
   var option = document.createElement("option");
   option.textContent = callRowIds[i];
   option.value = callRowIds[i];
-  
   for (var j = 0; j < selects.length; j++) {
     selects[j].appendChild(option.cloneNode(true));
+	   console.log("var select complete");
   }
-  updatecallDropdowns()
+        updatecallDropdowns();
+        console.log("CallDropdowns Updated");
 }
- 
-    
-    
-
     function change(select) {
+	    console.log("Change Select Start");
       const statusSelect = select.parentElement.parentElement.querySelector('.statusSelect');
       if (select.value === '1')
         statusSelect.value = '1'; // "🟢 10-8"
       else
         statusSelect.value = '2'; // "🟠 10-6"
+	     console.log("Change Select Stop");
     }
-
-function updatecallDropdowns() {
-  const calldropdowns = document.querySelectorAll('.callnumberselect');
-  
-  calldropdowns.forEach((calldropdown) => {
-     // Get the currently selected value
-    const currentValue = calldropdown.value;
-    
-     // Clear the existing options
-    calldropdown.innerHTML = '';
-    
-    
-
-    // Add a default "Unassigned" option
-    const unassignedOption = document.createElement('option');
-    unassignedOption.value = '1';
-    unassignedOption.textContent = 'Unassigned';
-    calldropdown.appendChild(unassignedOption);
-
-    // Add options from the callRowIds array
-    for (const callRowId of callRowIds) {
-      const option = document.createElement('option');
-      option.value = callRowId;
-      option.textContent = callRowId;
-      calldropdown.appendChild(option);
-    }
-     // Set the previously selected value back (if it's still valid)
-    if (currentValue && calldropdown.querySelector(`option[value="${currentValue}"]`)) {
-      calldropdown.value = currentValue;
+ function updatecallDropdowns() {
+       console.log("Function updatecalldropdowns() start");
+        const calldropdowns = document.querySelectorAll('.callnumberselect');
+        calldropdowns.forEach((calldropdown) => {
+          // Get the currently selected value
+          const currentValue = calldropdown.value;
+          // Clear the existing options
+          calldropdown.innerHTML = '';
+          // Add a default "Unassigned" option
+          const unassignedOption = document.createElement('option');
+          unassignedOption.value = '1';
+          unassignedOption.textContent = 'Unassigned';
+          calldropdown.appendChild(unassignedOption);
+          // Add options from the callRowIds array
+          for (const callRowId of callRowIds) {
+            const option = document.createElement('option');
+            option.value = callRowId;
+            option.textContent = callRowId;
+            calldropdown.appendChild(option);
+          }
+          // Find the index of the previously selected value in the dropdown options
+          const selectedIndex = Array.from(calldropdown.options).findIndex(
+            (option) => option.value === currentValue
+          );
+          // Set the selected index based on the previously selected value
+          if (selectedIndex !== -1) {
+            calldropdown.selectedIndex = selectedIndex;
+          } else {
+            // If the previously selected value is not found, set it to the default "Unassigned"
+            calldropdown.value = '1';
+          }
+        });
+        console.log("Function updatecalldropdowns() completed.");
       }
-  });
-}
-
     console.log(callRowIds);
     console.log(unitRowIds);
-
     </script>
   </body>
-
 </html>
