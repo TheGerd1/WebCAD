@@ -9,3 +9,4 @@ This will help me know what needs to be fixed or added
 I am most easily contacted through my discord: https://discord.gg/8g8EQN8xJH
 
 
+![image](https://github.com/user-attachments/assets/2743ca0e-23e8-4c09-a1d8-525d9f6b03bc)
