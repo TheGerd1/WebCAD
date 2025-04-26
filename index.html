@@ -60,8 +60,8 @@
       margin-bottom: 40px;
       justify-content: center;
       opacity: 0;
-      animation: fadeIn 2s forwards;
-      animation-delay: 2s; /* Fade in after logos */
+      animation: fadeButtons 2s forwards;
+      animation-delay: 2s;
     }
     .homepage-button {
       background-color: #444;
@@ -85,12 +85,12 @@
     }
     .corner-logo {
       position: absolute;
-      width: 200px;
-      height: 200px;
+      width: 240px;
+      height: 240px;
       border-radius: 50%;
       object-fit: cover;
-      opacity: 70;
-      animation: fadeIn 2s forwards;
+      opacity: 0;
+      animation: fadeLogos 2s forwards;
     }
     .logo-top-left {
       top: 10px;
@@ -102,7 +102,14 @@
       right: 10px;
       animation-delay: 1s;
     }
-    @keyframes fadeIn {
+
+    /* Separate animations */
+    @keyframes fadeLogos {
+      to {
+        opacity: 1;
+      }
+    }
+    @keyframes fadeButtons {
       to {
         opacity: 1;
       }
@@ -125,4 +132,9 @@
 
   <div class="footer-text">
     Made by GerdGenesis and Felix Dev, through GerdFelix Development.<br>
-    Created 2023, last updated on April
+    Created 2023, last updated on April 26th, 2025
+  </div>
+</div>
+
+</body>
+</html>
