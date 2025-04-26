@@ -699,8 +699,7 @@
                 // If there are no units assigned to the call, update the unit status
                 if (callUnits.length === 0) {
                   let callId = callRows[i].cells[0].textContent
-                  callRows[i].cells[1].textContent = "Available"
-                  callRows[i].cells[4].textContent = "Unassigned"
+                  callRows[i].cells[4].textContent = "";
                   let assignDetachButton =
                     callRows[i].cells[5].querySelector("button")
                   assignDetachButton.innerHTML = "Assign"
