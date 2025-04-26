@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebCAD</title>
-    <style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebCAD</title>
+  <style>
     input[type=text], select, textarea, input[type=number] {
       width: 100%;
       padding: 12px 20px;
@@ -14,7 +14,7 @@
       box-sizing: border-box;
       margin: 8px 0;
     }
-    input[type=checkbox] { 
+    input[type=checkbox] {
       margin: 15px 15px;
       display: block;
       width: 25px;
@@ -59,6 +59,9 @@
       gap: 20px;
       margin-bottom: 40px;
       justify-content: center;
+      opacity: 0;
+      animation: fadeIn 2s forwards;
+      animation-delay: 2s; /* Fade in after logos */
     }
     .homepage-button {
       background-color: #444;
@@ -82,11 +85,11 @@
     }
     .corner-logo {
       position: absolute;
-      width: 240px;
-      height: 240px;
+      width: 200px;
+      height: 200px;
       border-radius: 50%;
       object-fit: cover;
-      opacity: 0;
+      opacity: 70;
       animation: fadeIn 2s forwards;
     }
     .logo-top-left {
@@ -104,26 +107,22 @@
         opacity: 1;
       }
     }
-    </style>
+  </style>
 </head>
 <body>
 
 <div class="homepage">
-    <img src="WebCAD.png" class="corner-logo logo-top-left" alt="WebCAD Logo">
-    <img src="GFDevelopment (1).png" class="corner-logo logo-top-right" alt="GerdFelix Logo">
-    
-    <h1>Welcome to the WebCAD System</h1>
-    <p>Choose an option below:</p>
-    
-    <div class="homepage-buttons">
-        <a href="dispatch.html" class="homepage-button">OldDispatch</a>
-        <a href="newdispatch.html" class="homepage-button">NewDispatch</a>
-    </div>
+  <img src="WebCAD.png" class="corner-logo logo-top-left" alt="WebCAD Logo">
+  <img src="GFDevelopment (1).png" class="corner-logo logo-top-right" alt="GerdFelix Logo">
 
-    <div class="footer-text">
-        Made by GerdGenesis and Felix Dev, through GerdFelix Development. Created 2023, last updated on April 26th, 2025.
-    </div>
-</div>
+  <h1>Welcome to the WebCAD System</h1>
+  <p>Choose an option below:</p>
 
-</body>
-</html>
+  <div class="homepage-buttons">
+    <a href="dispatch.html" class="homepage-button">OldDispatch</a>
+    <a href="newdispatch.html" class="homepage-button">NewDispatch</a>
+  </div>
+
+  <div class="footer-text">
+    Made by GerdGenesis and Felix Dev, through GerdFelix Development.<br>
+    Created 2023, last updated on April
