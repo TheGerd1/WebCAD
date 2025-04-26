@@ -550,75 +550,79 @@
   closeUnitForm();
 }
 
+function editCall(id) {
+  let row = document.getElementById("callTable").rows[id];
 
-      // Function to edit the type and description of a call
-      function editCall(id) {
-        // Get the row of the call to be edited
-        let row = document.getElementById("callTable").rows[id]
+  let currentLocation = row.cells[1].innerText;
+  let currentType = row.cells[2].innerText;
+  let currentDescription = row.cells[3].innerText;
 
-        // Get the current values of the type and description fields
-        let currentLocation = row.cells[1].innerHTML
-        let currentType = row.cells[2].innerHTML
-        let currentDescription = row.cells[3].innerHTML
+  let locationInput = document.createElement("input");
+  locationInput.type = "text";
+  locationInput.value = currentLocation;
+  row.cells[1].innerHTML = "";
+  row.cells[1].appendChild(locationInput);
 
-        // Create input fields for the type and description
-        let locationInput = document.createElement("input")
-        locationInput.type = "text"
-        locationInput.value = currentLocation
-        let typeInput = document.createElement("input")
-        typeInput.type = "text"
-        typeInput.value = currentType
-        let descriptionInput = document.createElement("input")
-        descriptionInput.type = "text"
-        descriptionInput.value = currentDescription
+  let typeSelect = document.createElement("select");
+  typeSelect.innerHTML = document.getElementById("type").innerHTML; // Copy the options
+  row.cells[2].innerHTML = "";
+  row.cells[2].appendChild(typeSelect);
 
-        // Replace the type and description cells with the input fields
-        row.cells[1].innerHTML = ""
-        row.cells[1].appendChild(locationInput)
-        row.cells[2].innerHTML = ""
-        row.cells[2].appendChild(typeInput)
-        row.cells[3].innerHTML = ""
-        row.cells[3].appendChild(descriptionInput)
+  let tomSelectInstance = new TomSelect(typeSelect, {
+    create: false,
+    sortField: {
+      field: "text",
+      direction: "asc"
+    },
+    onInitialize: function() {
+      this.setValue(currentType); // Correctly set after init
+    }
+  });
 
-        // Add a save button to the row
-        let saveButton = document.createElement("button")
-        saveButton.innerHTML = "Save"
-        saveButton.onclick = function () {
-          saveCall(id)
-        }
-        row.cells[6].appendChild(saveButton)
-      }
+  let descriptionInput = document.createElement("input");
+  descriptionInput.type = "text";
+  descriptionInput.value = currentDescription;
+  row.cells[3].innerHTML = "";
+  row.cells[3].appendChild(descriptionInput);
 
-      // Function to save the edited type and description of a call
-      function saveCall(id) {
-        // Get the row of the call to be saved
-        let row = document.getElementById("callTable").rows[id]
+  row.cells[6].innerHTML = "";
+  let saveButton = document.createElement("button");
+  saveButton.innerHTML = "Save";
+  saveButton.onclick = function () {
+    saveCall(id);
+  };
+  row.cells[6].appendChild(saveButton);
+}
 
-        // Get the new values of the type and description fields
-        let newLocation = row.cells[1].childNodes[0].value
-        let newType = row.cells[2].childNodes[0].value
-        let newDescription = row.cells[3].childNodes[0].value
 
-        // Update the calls array with the new values
-        calls[id - 1].type = newLocation
-        calls[id - 1].type = newType
-        calls[id - 1].description = newDescription
 
-        // Update the table with the new values
-        row.cells[1].innerHTML = newLocation
-        row.cells[2].innerHTML = newType
-        row.cells[3].innerHTML = newDescription
+    function saveCall(id) {
+  let row = document.getElementById("callTable").rows[id];
 
-        // Remove the save button from the row
-        row.cells[6].innerHTML = ""
+  // Grab the new edited values
+  let newLocation = row.cells[1].querySelector("input").value;
+  let newType = row.cells[2].querySelector("select").tomselect.getValue(); // <-- get from Tom Select
+  let newDescription = row.cells[3].querySelector("input").value;
 
-        let editButton = document.createElement("button")
-        editButton.innerHTML = "Edit"
-        editButton.onclick = function () {
-          editCall(id)
-        }
-        row.cells[6].appendChild(editButton)
-      }
+  // Update the calls array
+  calls[id - 1].location = newLocation;
+  calls[id - 1].type = newType;
+  calls[id - 1].description = newDescription;
+
+  // Update the table
+  row.cells[1].innerText = newLocation;
+  row.cells[2].innerText = newType;
+  row.cells[3].innerText = newDescription;
+
+  // Restore Edit button
+  row.cells[6].innerHTML = "";
+  let editButton = document.createElement("button");
+  editButton.innerHTML = "Edit";
+  editButton.onclick = function () {
+    editCall(id);
+  };
+  row.cells[6].appendChild(editButton);
+}
 
       // Function to assign a unit to a call
       function assignUnit(row) {
