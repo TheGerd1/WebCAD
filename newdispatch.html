@@ -1,5 +1,8 @@
 <!doctype html>
 <html lang="en">
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -277,8 +280,68 @@
               <form>
                 <label for="location">Location:</label>
                 <input type="text" id="location" name="location" /><br /><br />
-                <label for="type">Type:</label>
-                <input type="text" id="type" name="type" /><br /><br />
+<label for="type">Type:</label>
+<select id="type" name="type" style="width: 100%; padding: 12px 20px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+  <option value="">Select a Call Type...</option>
+  <option value="32 - Backup Request">32 - Backup Request</option>
+  <option value="71 - Supervisor Request">71 - Supervisor Request</option>
+  <option value="ALA - Alarm">ALA - Alarm</option>
+  <option value="AMB - Ambulance">AMB - Ambulance</option>
+  <option value="AR - Arson">AR - Arson</option>
+  <option value="AS - Assault">AS - Assault</option>
+  <option value="ASW - Assault w/ Weapon">ASW - Assault w/ Weapon</option>
+  <option value="ATL - Attempt to Locate">ATL - Attempt to Locate</option>
+  <option value="BR - Brandishing">BR - Brandishing</option>
+  <option value="BSH - Barricaded Shooter">BSH - Barricaded Shooter</option>
+  <option value="BUR - Burglary">BUR - Burglary</option>
+  <option value="CIP - Civil Problem">CIP - Civil Problem</option>
+  <option value="COWC - Contact / Welfare Check">COWC - Contact / Welfare Check</option>
+  <option value="DEAD - Death Investigation">DEAD - Death Investigation</option>
+  <option value="DID - Disturbance Drunk Subject">DID - Disturbance Drunk Subject</option>
+  <option value="DIF - Disturbance Fight">DIF - Disturbance Fight</option>
+  <option value="DIO - Disturbance Other">DIO - Disturbance Other</option>
+  <option value="DIW - Disturbance with Weapon">DIW - Disturbance with Weapon</option>
+  <option value="FIA - Fire Alarm">FIA - Fire Alarm</option>
+  <option value="HA - Harassment">HA - Harassment</option>
+  <option value="HAZ - Hazardous Situation">HAZ - Hazardous Situation</option>
+  <option value="IC - Incomplete">IC - Incomplete</option>
+  <option value="INV - Investigation">INV - Investigation</option>
+  <option value="KIP - Kidnapping">KIP - Kidnapping</option>
+  <option value="MCI - Mass Casualty Incident">MCI - Mass Casualty Incident</option>
+  <option value="MPR - Missing Person">MPR - Missing Person</option>
+  <option value="NOC - Noise Complaint">NOC - Noise Complaint</option>
+  <option value="OID - Officer in Distress">OID - Officer in Distress</option>
+  <option value="OTH - Other">OTH - Other</option>
+  <option value="OVD - Overdose">OVD - Overdose</option>
+  <option value="PI - Patrol Information">PI - Patrol Information</option>
+  <option value="POAF - Police Assist Fire">POAF - Police Assist Fire</option>
+  <option value="POEMS - Police Assist EMS">POEMS - Police Assist EMS</option>
+  <option value="POO - Police Other">POO - Police Other</option>
+  <option value="POSW - Search Warrant">POSW - Search Warrant</option>
+  <option value="PPF - Police Pursuit, Foot">PPF - Police Pursuit, Foot</option>
+  <option value="PPV - Police Pursuit, Vehicle">PPV - Police Pursuit, Vehicle</option>
+  <option value="RB - Robbery Armed">RB - Robbery Armed</option>
+  <option value="READ - Read Me">READ - Read Me</option>
+  <option value="RE - Reckless Endangerment">RE - Reckless Endangerment</option>
+  <option value="SCE - Sex Crime">SCE - Sex Crime</option>
+  <option value="SHF - Shots Fired">SHF - Shots Fired</option>
+  <option value="SHH - Shots Heard">SHH - Shots Heard</option>
+  <option value="TAI - Traffic Accident, Injuries">TAI - Traffic Accident, Injuries</option>
+  <option value="TAN - Traffic Accident, No Injuries">TAN - Traffic Accident, No Injuries</option>
+  <option value="TAU - Traffic Accident, Unknown Injuries">TAU - Traffic Accident, Unknown Injuries</option>
+  <option value="TH - Theft">TH - Theft</option>
+  <option value="THR - Threats">THR - Threats</option>
+  <option value="THRB - Threats Bomb">THRB - Threats Bomb</option>
+  <option value="THS - Shoplifter">THS - Shoplifter</option>
+  <option value="TRD - Traffic DWI">TRD - Traffic DWI</option>
+  <option value="TRE - Trespassing">TRE - Trespassing</option>
+  <option value="TRSTP - Traffic Stop">TRSTP - Traffic Stop</option>
+  <option value="UNK - Unknown">UNK - Unknown</option>
+  <option value="VEA - Vehicle Abandoned">VEA - Vehicle Abandoned</option>
+  <option value="VES - Vehicle Stolen">VES - Vehicle Stolen</option>
+  <option value="WP - Wanted Person">WP - Wanted Person</option>
+</select><br /><br />
+
                 <label for="description">Description:</label>
                 <input
                   type="text"
@@ -360,62 +423,70 @@
         document.getElementById("calldiv").style.display = "none"
       }
 
-      // Function to add a new call to the table and the calls array
-      function addCall() {
-        // Get the values from the form
-        let location = document.getElementById("location").value
-        let type = document.getElementById("type").value
-        let description = document.getElementById("description").value
-        let units = ""
-        let dateTime = new Date().toLocaleString()
+    function addCall() {
+  // Get the values from the form
+  let location = document.getElementById("location").value.trim();
+  let type = document.getElementById("type").value.trim();
+  let description = document.getElementById("description").value.trim();
+  let units = "";
+  let dateTime = new Date().toLocaleString();
 
-        // Create a unique ID for the call
-        let id = calls.length + 1
+  // Validation: Check for blank fields
+  if (location === "" || type === "" || description === "") {
+    alert("Please fill out Location, Type, and Description before submitting the call.");
+    return; // Stop the function if validation fails
+  }
 
-        // Add the call to the calls array
-        calls.push({
-          id: id,
-          location: location,
-          type: type,
-          description: description,
-          units: units,
-          dateTime: dateTime,
-        })
+  // Create a unique ID for the call
+  let id = calls.length + 1;
 
-        // Add the call to the table
-        let table = document.getElementById("callTableBody")
-        let row = table.insertRow()
-        let idCell = row.insertCell(0)
-        let locationCell = row.insertCell(1)
-        let typeCell = row.insertCell(2)
-        let descriptionCell = row.insertCell(3)
-        let unitsCell = row.insertCell(4)
-        let dateTimeCell = row.insertCell(5)
-        let editCell = row.insertCell(6)
-        let deleteCell = row.insertCell(7)
+  // Add the call to the calls array
+  calls.push({
+    id: id,
+    location: location,
+    type: type,
+    description: description,
+    units: units,
+    dateTime: dateTime,
+  });
 
-        idCell.innerHTML = id
-        locationCell.innerHTML = location
-        typeCell.innerHTML = type
-        descriptionCell.innerHTML = description
-        unitsCell.innerHTML = units
-        dateTimeCell.innerHTML = dateTime
-        let editButton = document.createElement("button")
-        editButton.innerHTML = "Edit"
-        editButton.onclick = function () {
-          editCall(id)
-        }
-        row.cells[6].appendChild(editButton)
-        let deleteButton = document.createElement("button")
-        deleteButton.innerHTML = "Delete"
-        deleteButton.onclick = function () {
-          deleteCall(row)
-        }
-        row.cells[7].appendChild(deleteButton)
+  // Add the call to the table (rest of your existing code here)
+  let table = document.getElementById("callTableBody");
+  let row = table.insertRow();
+  let idCell = row.insertCell(0);
+  let locationCell = row.insertCell(1);
+  let typeCell = row.insertCell(2);
+  let descriptionCell = row.insertCell(3);
+  let unitsCell = row.insertCell(4);
+  let dateTimeCell = row.insertCell(5);
+  let editCell = row.insertCell(6);
+  let deleteCell = row.insertCell(7);
 
-        // Close the "New Call" form
-        closeForm()
-      }
+  idCell.innerHTML = id;
+  locationCell.innerHTML = location;
+  typeCell.innerHTML = type;
+  descriptionCell.innerHTML = description;
+  unitsCell.innerHTML = units;
+  dateTimeCell.innerHTML = dateTime;
+
+  let editButton = document.createElement("button");
+  editButton.innerHTML = "Edit";
+  editButton.onclick = function () {
+    editCall(id);
+  };
+  row.cells[6].appendChild(editButton);
+
+  let deleteButton = document.createElement("button");
+  deleteButton.innerHTML = "Delete";
+  deleteButton.onclick = function () {
+    deleteCall(row);
+  };
+  row.cells[7].appendChild(deleteButton);
+
+  // Close the "New Call" form
+  closeForm();
+}
+
 
       // Function to open the "New Unit" form
       function openUnitForm() {
@@ -427,119 +498,131 @@
         document.getElementById("unitdiv").style.display = "none"
       }
 
-      // Function to add a new unit to the table and the units array
-      function addUnit() {
-        // Get the values from the form
-        let callsign = document.getElementById("callsign").value
-        let supervisor = document.getElementById("supervisor").checked
-        let status = "Available"
+   function addUnit() {
+  // Get the values from the form
+  let callsign = document.getElementById("callsign").value.trim();
+  let supervisor = document.getElementById("supervisor").checked;
+  let status = "Available";
 
-        // Add the unit to the units array
-        units.push({
-          callsign: callsign,
-          supervisor: supervisor,
-          status: status,
-        })
+  // Validation: Check for blank callsign
+  if (callsign === "") {
+    alert("Please enter a Callsign before submitting the unit.");
+    return; // Stop the function if validation fails
+  }
 
-        // Add the unit to the table
-        let table = document.getElementById("unitTableBody")
-        let row = table.insertRow()
-        let callsignCell = row.insertCell(0)
-        let statusCell = row.insertCell(1)
-        let assignmentCell = row.insertCell(2)
-        let supervisorCell = row.insertCell(3)
-        let assignCell = row.insertCell(4)
-        let deleteCell = row.insertCell(5)
-        callsignCell.innerHTML = callsign
-        statusCell.innerHTML = `<span class="${status.toLowerCase()}">${status}</span>`
+  // Add the unit to the units array
+  units.push({
+    callsign: callsign,
+    supervisor: supervisor,
+    status: status,
+  });
 
-        assignmentCell.innerHTML = "Unassigned"
-        supervisorCell.innerHTML = supervisor ? "Yes" : "No"
-        let assignButton = document.createElement("button")
-        assignButton.innerHTML = "Assign"
-        assignButton.onclick = function () {
-          assignUnit(row)
-        }
-        assignCell.appendChild(assignButton)
-        let deleteButton = document.createElement("button")
-        deleteButton.innerHTML = "Delete"
-        deleteButton.onclick = function () {
-          deleteUnit(row)
-        }
-        row.cells[5].appendChild(deleteButton)
+  // Add the unit to the table (rest of your existing code here)
+  let table = document.getElementById("unitTableBody");
+  let row = table.insertRow();
+  let callsignCell = row.insertCell(0);
+  let statusCell = row.insertCell(1);
+  let assignmentCell = row.insertCell(2);
+  let supervisorCell = row.insertCell(3);
+  let assignCell = row.insertCell(4);
+  let deleteCell = row.insertCell(5);
 
-        // Close the "New Unit" form
-        closeUnitForm()
-      }
+  callsignCell.innerHTML = callsign;
+  statusCell.innerHTML = `<span class="${status.toLowerCase()}">${status}</span>`;
+  assignmentCell.innerHTML = "Unassigned";
+  supervisorCell.innerHTML = supervisor ? "Yes" : "No";
 
-      // Function to edit the type and description of a call
-      function editCall(id) {
-        // Get the row of the call to be edited
-        let row = document.getElementById("callTable").rows[id]
+  let assignButton = document.createElement("button");
+  assignButton.innerHTML = "Assign";
+  assignButton.onclick = function () {
+    assignUnit(row);
+  };
+  assignCell.appendChild(assignButton);
 
-        // Get the current values of the type and description fields
-        let currentLocation = row.cells[1].innerHTML
-        let currentType = row.cells[2].innerHTML
-        let currentDescription = row.cells[3].innerHTML
+  let deleteButton = document.createElement("button");
+  deleteButton.innerHTML = "Delete";
+  deleteButton.onclick = function () {
+    deleteUnit(row);
+  };
+  row.cells[5].appendChild(deleteButton);
 
-        // Create input fields for the type and description
-        let locationInput = document.createElement("input")
-        locationInput.type = "text"
-        locationInput.value = currentLocation
-        let typeInput = document.createElement("input")
-        typeInput.type = "text"
-        typeInput.value = currentType
-        let descriptionInput = document.createElement("input")
-        descriptionInput.type = "text"
-        descriptionInput.value = currentDescription
+  // Close the "New Unit" form
+  closeUnitForm();
+}
 
-        // Replace the type and description cells with the input fields
-        row.cells[1].innerHTML = ""
-        row.cells[1].appendChild(locationInput)
-        row.cells[2].innerHTML = ""
-        row.cells[2].appendChild(typeInput)
-        row.cells[3].innerHTML = ""
-        row.cells[3].appendChild(descriptionInput)
+function editCall(id) {
+  let row = document.getElementById("callTable").rows[id];
 
-        // Add a save button to the row
-        let saveButton = document.createElement("button")
-        saveButton.innerHTML = "Save"
-        saveButton.onclick = function () {
-          saveCall(id)
-        }
-        row.cells[6].appendChild(saveButton)
-      }
+  let currentLocation = row.cells[1].innerText;
+  let currentType = row.cells[2].innerText;
+  let currentDescription = row.cells[3].innerText;
 
-      // Function to save the edited type and description of a call
-      function saveCall(id) {
-        // Get the row of the call to be saved
-        let row = document.getElementById("callTable").rows[id]
+  let locationInput = document.createElement("input");
+  locationInput.type = "text";
+  locationInput.value = currentLocation;
+  row.cells[1].innerHTML = "";
+  row.cells[1].appendChild(locationInput);
 
-        // Get the new values of the type and description fields
-        let newLocation = row.cells[1].childNodes[0].value
-        let newType = row.cells[2].childNodes[0].value
-        let newDescription = row.cells[3].childNodes[0].value
+  let typeSelect = document.createElement("select");
+  typeSelect.innerHTML = document.getElementById("type").innerHTML; // Copy the options
+  row.cells[2].innerHTML = "";
+  row.cells[2].appendChild(typeSelect);
 
-        // Update the calls array with the new values
-        calls[id - 1].type = newLocation
-        calls[id - 1].type = newType
-        calls[id - 1].description = newDescription
+  let tomSelectInstance = new TomSelect(typeSelect, {
+    create: false,
+    sortField: {
+      field: "text",
+      direction: "asc"
+    },
+    onInitialize: function() {
+      this.setValue(currentType); // Correctly set after init
+    }
+  });
 
-        // Update the table with the new values
-        row.cells[1].innerHTML = newLocation
-        row.cells[2].innerHTML = newType
-        row.cells[3].innerHTML = newDescription
+  let descriptionInput = document.createElement("input");
+  descriptionInput.type = "text";
+  descriptionInput.value = currentDescription;
+  row.cells[3].innerHTML = "";
+  row.cells[3].appendChild(descriptionInput);
 
-        // Remove the save button from the row
-        row.cells[6].innerHTML = ""
+  row.cells[6].innerHTML = "";
+  let saveButton = document.createElement("button");
+  saveButton.innerHTML = "Save";
+  saveButton.onclick = function () {
+    saveCall(id);
+  };
+  row.cells[6].appendChild(saveButton);
+}
 
-        let editButton = document.createElement("button")
-        editButton.innerHTML = "Edit"
-        editButton.onclick = function () {
-          editCall(id)
-        }
-        row.cells[6].appendChild(editButton)
-      }
+
+
+    function saveCall(id) {
+  let row = document.getElementById("callTable").rows[id];
+
+  // Grab the new edited values
+  let newLocation = row.cells[1].querySelector("input").value;
+  let newType = row.cells[2].querySelector("select").tomselect.getValue(); // <-- get from Tom Select
+  let newDescription = row.cells[3].querySelector("input").value;
+
+  // Update the calls array
+  calls[id - 1].location = newLocation;
+  calls[id - 1].type = newType;
+  calls[id - 1].description = newDescription;
+
+  // Update the table
+  row.cells[1].innerText = newLocation;
+  row.cells[2].innerText = newType;
+  row.cells[3].innerText = newDescription;
+
+  // Restore Edit button
+  row.cells[6].innerHTML = "";
+  let editButton = document.createElement("button");
+  editButton.innerHTML = "Edit";
+  editButton.onclick = function () {
+    editCall(id);
+  };
+  row.cells[6].appendChild(editButton);
+}
 
       // Function to assign a unit to a call
       function assignUnit(row) {
@@ -808,6 +891,16 @@
   }
 }
 
+// Activate live search on the call type dropdown
+document.addEventListener('DOMContentLoaded', function() {
+  new TomSelect('#type', {
+    create: false,
+    sortField: {
+      field: "text",
+      direction: "asc"
+    }
+  });
+});
 
     </script>
   </body>
