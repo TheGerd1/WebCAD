@@ -326,6 +326,7 @@
   <option value="SCE - Sex Crime">SCE - Sex Crime</option>
   <option value="SHF - Shots Fired">SHF - Shots Fired</option>
   <option value="SHH - Shots Heard">SHH - Shots Heard</option>
+  <option value="SUS - Suspicious Person">SUS - Suspicious Person</option>
   <option value="TAI - Traffic Accident, Injuries">TAI - Traffic Accident, Injuries</option>
   <option value="TAN - Traffic Accident, No Injuries">TAN - Traffic Accident, No Injuries</option>
   <option value="TAU - Traffic Accident, Unknown Injuries">TAU - Traffic Accident, Unknown Injuries</option>
@@ -532,12 +533,21 @@
   assignmentCell.innerHTML = "Unassigned";
   supervisorCell.innerHTML = supervisor ? "Yes" : "No";
 
-  let assignButton = document.createElement("button");
-  assignButton.innerHTML = "Assign";
-  assignButton.onclick = function () {
-    assignUnit(row);
-  };
-  assignCell.appendChild(assignButton);
+ let assignButton = document.createElement("button");
+assignButton.innerHTML = "Assign";
+assignButton.onclick = function () {
+  assignUnit(row);
+};
+
+let busyButton = document.createElement("button");
+busyButton.innerHTML = "Busy";
+busyButton.onclick = function () {
+  toggleBusy(row, busyButton);
+};
+
+assignCell.appendChild(assignButton);
+assignCell.appendChild(busyButton);
+
 
   let deleteButton = document.createElement("button");
   deleteButton.innerHTML = "Delete";
@@ -548,6 +558,8 @@
 
   // Close the "New Unit" form
   closeUnitForm();
+  sortUnitTable();
+
 }
 
 function editCall(id) {
@@ -748,6 +760,22 @@ function editCall(id) {
           document.body.appendChild(popup)
         }
       }
+function toggleBusy(row, button) {
+  const statusCell = row.cells[1];
+  const assignmentCell = row.cells[2];
+
+  if (assignmentCell.innerText === "Unassigned") {
+    if (statusCell.innerText === "Available") {
+      statusCell.innerHTML = `<span class="busy">Busy</span>`;
+      button.innerText = "Available";
+    } else {
+      statusCell.innerHTML = `<span class="available">Available</span>`;
+      button.innerText = "Busy";
+    }
+  } else {
+    alert("This unit is already assigned to a call and cannot toggle busy.");
+  }
+}
 
       function deleteCall(row) {
         if (confirm("Are you sure you want to delete this call?")) {
@@ -901,6 +929,31 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
+function sortUnitTable() {
+  const table = document.getElementById("unitTableBody");
+  const rows = Array.from(table.rows);
+
+  rows.sort((a, b) => {
+    const aCallsign = a.cells[0].innerText.trim();
+    const bCallsign = b.cells[0].innerText.trim();
+
+    // Extract number and letter parts
+    const aMatch = aCallsign.match(/^(\d+)?([A-Za-z]*)$/);
+    const bMatch = bCallsign.match(/^(\d+)?([A-Za-z]*)$/);
+
+    const aNum = parseInt(aMatch?.[1] || 0, 10);
+    const bNum = parseInt(bMatch?.[1] || 0, 10);
+    const aAlpha = aMatch?.[2] || "";
+    const bAlpha = bMatch?.[2] || "";
+
+    // First sort by number, then by letters
+    if (aNum !== bNum) return aNum - bNum;
+    return aAlpha.localeCompare(bAlpha);
+  });
+
+  rows.forEach(row => table.appendChild(row));
+}
+
 
     </script>
   </body>
