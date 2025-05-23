@@ -271,6 +271,8 @@
           <button onclick="openUnitForm()">New Unit</button>
           <button onclick="toggleTheme()">Toggle Theme</button>
           <button onclick="toggleSignal100()">Signal 100</button>
+          <button onclick="toggleNotepad()">Notepad</button>
+
         </div>
 
         <div class="calldiv" id="calldiv">
@@ -389,6 +391,24 @@
               </table>
             </section>
           </div>
+<div class="notepad" id="notepad" style="
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #444;
+  padding: 20px;
+  border: 1px solid black;
+  z-index: 1000;
+  width: 400px;
+  height: 300px;
+">
+  <h3 style="color: white;">Notepad</h3>
+  <textarea id="notepadText" style="width: 100%; height: 200px;"></textarea>
+  <br />
+  <button onclick="closeNotepad()">Close</button>
+</div>
 
           <div class="item d">
             <section id="display-unit-info">
@@ -952,6 +972,14 @@ function sortUnitTable() {
   });
 
   rows.forEach(row => table.appendChild(row));
+}
+function toggleNotepad() {
+  const pad = document.getElementById("notepad");
+  pad.style.display = pad.style.display === "block" ? "none" : "block";
+}
+
+function closeNotepad() {
+  document.getElementById("notepad").style.display = "none";
 }
 
 
