@@ -186,6 +186,17 @@
         color: red;
         font-weight: bold;
       }
+  
+.grid-container {
+  display: grid;
+  margin-left: 260px; /* Leaves room for notepad */
+  grid-template-columns: (4, [col] 150px);
+  grid-template-rows: (2, [row] auto);
+  gap: 10px;
+  background-color: transparent;
+  padding: 10px;
+}
+
     </style>
   </head>
 
@@ -221,6 +232,32 @@
   <img src="WebCAD.png" alt="WebCAD Logo" style="width: 100%; height: 100%; object-fit: cover;">
 </div>
 
+<div id="notepad" style="
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: #444;
+  color: white;
+  padding: 10px;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+">
+  <h3 style="margin-top: 0;">Notepad</h3>
+  <textarea id="notepadText" style="
+    flex: 1;
+    width: 100%;
+    resize: none;
+    background-color: #fff;
+    color: #000;
+    padding: 5px;
+    border-radius: 4px;
+    box-sizing: border-box;
+  "></textarea>
+</div>
 
 
     <div class="grid-container">
@@ -271,7 +308,9 @@
           <button onclick="openUnitForm()">New Unit</button>
           <button onclick="toggleTheme()">Toggle Theme</button>
           <button onclick="toggleSignal100()">Signal 100</button>
-          <button onclick="toggleNotepad()">Notepad</button>
+          <button onclick="toggleNotepad()">Toggle Notepad</button>
+
+     
 
         </div>
 
@@ -391,24 +430,7 @@
               </table>
             </section>
           </div>
-<div class="notepad" id="notepad" style="
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #444;
-  padding: 20px;
-  border: 1px solid black;
-  z-index: 1000;
-  width: 400px;
-  height: 300px;
-">
-  <h3 style="color: white;">Notepad</h3>
-  <textarea id="notepadText" style="width: 100%; height: 200px;"></textarea>
-  <br />
-  <button onclick="closeNotepad()">Close</button>
-</div>
+
 
           <div class="item d">
             <section id="display-unit-info">
@@ -424,6 +446,8 @@
                 </thead>
                 <tbody id="unitTableBody"></tbody>
               </table>
+              <button onclick="unionUnits()" style="margin-top: 10px;">Union Selected Units</button>
+
             </section>
           </div>
         </div>
@@ -547,6 +571,12 @@
   let supervisorCell = row.insertCell(3);
   let assignCell = row.insertCell(4);
   let deleteCell = row.insertCell(5);
+// Add a checkbox for selecting the unit
+let selectCell = row.insertCell(6);
+let checkbox = document.createElement("input");
+checkbox.type = "checkbox";
+checkbox.classList.add("unit-selector");
+selectCell.appendChild(checkbox);
 
   callsignCell.innerHTML = callsign;
   statusCell.innerHTML = `<span class="${status.toLowerCase()}">${status}</span>`;
@@ -957,29 +987,105 @@ function sortUnitTable() {
     const aCallsign = a.cells[0].innerText.trim();
     const bCallsign = b.cells[0].innerText.trim();
 
-    // Extract number and letter parts
-    const aMatch = aCallsign.match(/^(\d+)?([A-Za-z]*)$/);
-    const bMatch = bCallsign.match(/^(\d+)?([A-Za-z]*)$/);
+    // Move Union callsigns to the bottom
+    const isUnionA = aCallsign.startsWith("U");
+    const isUnionB = bCallsign.startsWith("U");
 
-    const aNum = parseInt(aMatch?.[1] || 0, 10);
-    const bNum = parseInt(bMatch?.[1] || 0, 10);
-    const aAlpha = aMatch?.[2] || "";
-    const bAlpha = bMatch?.[2] || "";
+    if (isUnionA && !isUnionB) return 1;
+    if (!isUnionA && isUnionB) return -1;
 
-    // First sort by number, then by letters
-    if (aNum !== bNum) return aNum - bNum;
-    return aAlpha.localeCompare(bAlpha);
+    // If both are unions or both are not unions, sort alphabetically
+    return aCallsign.localeCompare(bCallsign);
   });
 
   rows.forEach(row => table.appendChild(row));
 }
+
 function toggleNotepad() {
   const pad = document.getElementById("notepad");
-  pad.style.display = pad.style.display === "block" ? "none" : "block";
+  const grid = document.querySelector(".grid-container");
+
+  if (pad.style.display === "none") {
+    pad.style.display = "flex";
+    grid.style.marginLeft = "260px";
+  } else {
+    pad.style.display = "none";
+    grid.style.marginLeft = "0";
+  }
 }
+
 
 function closeNotepad() {
   document.getElementById("notepad").style.display = "none";
+}
+let unionCount = 1;
+function unionUnits() {
+  const checkboxes = document.querySelectorAll('.unit-selector:checked');
+  if (checkboxes.length !== 2) {
+    alert("Please select exactly two units to form a Union.");
+    return;
+  }
+
+
+  const unitRows = Array.from(checkboxes).map(cb => cb.closest("tr"));
+  const callsigns = unitRows.map(row => row.cells[0].textContent.trim());
+
+  const unionCallsign = `U${unionCount} - ${callsigns.join(" & ")}`;
+  unionCount++; // Increment for the next union
+
+  // Remove the old units
+  unitRows.forEach(row => {
+    document.getElementById("unitTableBody").removeChild(row);
+    const index = units.findIndex(u => u.callsign === row.cells[0].textContent.trim());
+    if (index !== -1) units.splice(index, 1);
+  });
+
+  // Add the new union unit
+  units.push({
+    callsign: unionCallsign,
+    supervisor: false,
+    status: "Available"
+  });
+
+  // Re-add as one combined unit
+  let table = document.getElementById("unitTableBody");
+  let row = table.insertRow();
+  row.insertCell(0).innerHTML = unionCallsign;
+  row.insertCell(1).innerHTML = `<span class="available">Available</span>`;
+  row.insertCell(2).innerHTML = "Unassigned";
+  row.insertCell(3).innerHTML = "No";
+
+  let assignCell = row.insertCell(4);
+  let assignButton = document.createElement("button");
+  assignButton.innerHTML = "Assign";
+  assignButton.onclick = function () {
+    assignUnit(row);
+  };
+
+  let busyButton = document.createElement("button");
+  busyButton.innerHTML = "Busy";
+  busyButton.onclick = function () {
+    toggleBusy(row, busyButton);
+  };
+
+  assignCell.appendChild(assignButton);
+  assignCell.appendChild(busyButton);
+
+  let deleteCell = row.insertCell(5);
+  let deleteButton = document.createElement("button");
+  deleteButton.innerHTML = "Delete";
+  deleteButton.onclick = function () {
+    deleteUnit(row);
+  };
+  deleteCell.appendChild(deleteButton);
+
+  let selectCell = row.insertCell(6);
+  let checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.classList.add("unit-selector");
+  selectCell.appendChild(checkbox);
+
+  sortUnitTable();
 }
 
 
