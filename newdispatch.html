@@ -39,6 +39,15 @@
       }
 
       input[type="checkbox"] {
+        margin: 0;
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+      }
+
+      /* Form checkboxes - different styling for forms */
+      .calldiv input[type="checkbox"], 
+      .unitdiv input[type="checkbox"] {
         margin: 15px 15px;
         display: block;
         width: 25px;
@@ -130,8 +139,13 @@
         background-color: #444;
         padding: 20px;
         border: 1px solid black;
-        z-index: 1;
+        z-index: 1001;
+        max-height: 90vh;
+        overflow-y: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
       }
+      
       .unitdiv {
         display: none;
         position: fixed;
@@ -141,12 +155,47 @@
         background-color: #444;
         padding: 20px;
         border: 1px solid black;
-        z-index: 1;
+        z-index: 1001;
+        max-height: 90vh;
+        overflow-y: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      }
+
+      /* Mobile form adjustments */
+      @media (max-width: 599px) {
+        .calldiv, .unitdiv {
+          width: 95%;
+          max-width: none;
+          left: 2.5%;
+          transform: translateY(-50%);
+          padding: 15px;
+          max-height: 80vh;
+        }
+        
+        .calldiv form, .unitdiv form {
+          display: flex;
+          flex-direction: column;
+        }
+        
+        .calldiv label, .unitdiv label {
+          margin-bottom: 5px;
+          font-weight: bold;
+          color: white;
+        }
+        
+        .calldiv input, .calldiv select, .calldiv textarea,
+        .unitdiv input, .unitdiv select, .unitdiv textarea {
+          margin-bottom: 10px;
+        }
       }
       .table {
         font-family: Arial, Helvetica, sans-serif;
         border-collapse: collapse;
         width: 100%;
+        max-width: 100%;
+        table-layout: fixed;
+        font-size: 14px;
       }
 
       .table td:not(:last-child),
@@ -164,11 +213,13 @@
       }
 
       .table th {
-        padding-top: 12px;
-        padding-bottom: 12px;
+        padding: 10px 8px;
         text-align: left;
         background-color: #444;
         color: white;
+        height: 35px;
+        font-weight: bold;
+        font-size: 13px;
       }
       body {
         background-color: #ffffff;
@@ -176,7 +227,34 @@
         transition:
           background-color 0.3s,
           color 0.3s;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
       }
+
+      body.dark-theme {
+        background-color: #1a1a1a;
+        color: #ffffff;
+      }
+
+      body.dark-theme .table {
+        background-color: #333;
+        color: #fff;
+      }
+
+      body.dark-theme .table tr:nth-child(even) td:not(:last-child) {
+        background-color: #444;
+      }
+
+      body.dark-theme .table tr:hover {
+        background-color: #555;
+      }
+
+      body.dark-theme .item {
+        background-color: #222;
+        color: #fff;
+      }
+      
       .available {
         color: green;
         font-weight: bold;
@@ -185,6 +263,603 @@
       .busy {
         color: red;
         font-weight: bold;
+      }
+
+      /* Advanced responsive design with viewport-based scaling */
+      .grid-container {
+        display: grid;
+        margin-left: 0; /* Remove left margin so notepad floats over */
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 10px;
+        background-color: transparent;
+        padding: 10px;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      /* Viewport-based font sizing */
+      html {
+        font-size: clamp(12px, 1.2vw, 16px);
+      }
+
+      body {
+        font-size: 1rem;
+        overflow-x: auto;
+      }
+
+      .table {
+        font-size: 13px;
+        width: 100%;
+        table-layout: fixed;
+        word-wrap: break-word;
+        max-width: 100%;
+      }
+
+      /* Optimized column widths for full visibility */
+      .table th:nth-child(1), .table td:nth-child(1) { width: 50px; min-width: 50px; max-width: 50px; }  /* ID */
+      .table th:nth-child(2), .table td:nth-child(2) { width: 150px; min-width: 120px; max-width: 180px; }  /* Location/Callsign */
+      .table th:nth-child(3), .table td:nth-child(3) { width: 100px; min-width: 80px; max-width: 120px; }  /* Type/Status */
+      .table th:nth-child(4), .table td:nth-child(4) { width: 200px; min-width: 150px; max-width: 250px; }  /* Description/Assignment */
+      .table th:nth-child(5), .table td:nth-child(5) { width: 100px; min-width: 80px; max-width: 120px; }  /* Units/Supervisor */
+      .table th:nth-child(6), .table td:nth-child(6) { width: 120px; min-width: 100px; max-width: 140px; }  /* Date/Time */
+
+      /* Unit table specific widths */
+      #unitTable th:nth-child(1), #unitTable td:nth-child(1) { width: 100px; min-width: 80px; max-width: 120px; } /* Callsign */
+      #unitTable th:nth-child(2), #unitTable td:nth-child(2) { width: 80px; min-width: 70px; max-width: 90px; } /* Status */
+      #unitTable th:nth-child(3), #unitTable td:nth-child(3) { width: 120px; min-width: 100px; max-width: 140px; } /* Assignment */
+      #unitTable th:nth-child(4), #unitTable td:nth-child(4) { width: 70px; min-width: 50px; max-width: 80px; } /* Supervisor */
+      #unitTable th:nth-child(5), #unitTable td:nth-child(5) { width: 120px; min-width: 100px; max-width: 140px; } /* Date/Time */
+
+      .table th, .table td {
+        padding: 4px 6px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        vertical-align: middle;
+        height: 35px;
+        max-height: 35px;
+        line-height: 1.2;
+        font-size: 11px;
+      }
+
+      /* Context Menu System */
+      .context-menu {
+        position: fixed;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 0;
+        margin: 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 10000;
+        min-width: 150px;
+        display: none;
+      }
+
+      .context-menu-item {
+        padding: 10px 15px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+        transition: background-color 0.2s;
+      }
+
+      .context-menu-item:last-child {
+        border-bottom: none;
+      }
+
+      .context-menu-item:hover {
+        background-color: #f5f5f5;
+      }
+
+      .context-menu-item.danger:hover {
+        background-color: #ffebee;
+        color: #d32f2f;
+      }
+
+      /* Table row highlighting */
+      .table tr.selected {
+        background-color: #e3f2fd !important;
+      }
+
+      .table tr.context-active {
+        background-color: #fff3e0 !important;
+      }
+
+      /* Action Modal Styling */
+      .action-modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        z-index: 10001;
+        min-width: 400px;
+        max-width: 90vw;
+      }
+
+      .action-modal h3 {
+        margin-top: 0;
+        color: #333;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 10000;
+      }
+
+      /* Table container constraints */
+      .table-container {
+        overflow-x: auto;
+        overflow-y: visible;
+        max-width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background: white;
+      }
+
+      .table-container .table {
+        margin: 0;
+        width: 100%;
+        min-width: 600px; /* Reduced minimum width */
+        max-width: 100%;
+      }
+
+      /* Status badges */
+      .status-badge {
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+        white-space: nowrap;
+        max-width: 80px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
+      .status-available {
+        background-color: #4caf50;
+        color: white;
+      }
+
+      .status-busy {
+        background-color: #f44336;
+        color: white;
+      }
+
+      .status-assigned {
+        background-color: #2196f3;
+        color: white;
+      }
+
+      button {
+        font-size: clamp(10px, 1vw, 14px);
+        padding: clamp(4px, 0.8vw, 8px) clamp(8px, 1.2vw, 16px);
+        margin: clamp(1px, 0.2vw, 2px);
+        min-width: 60px;
+      }
+
+      input, select, textarea {
+        font-size: clamp(12px, 1.1vw, 16px);
+        padding: clamp(8px, 1vw, 12px) clamp(12px, 1.5vw, 20px);
+      }
+
+      h1 {
+        font-size: clamp(16px, 2vw, 28px);
+        margin: clamp(5px, 1vw, 10px) 0;
+      }
+
+      h3 {
+        font-size: clamp(14px, 1.5vw, 18px);
+        margin-top: 0;
+      }
+
+      #clock {
+        font-size: clamp(12px, 1.2vw, 16px);
+      }
+
+      /* Large screens (desktops) */
+      @media (min-width: 1200px) {
+        .grid-container {
+          margin-left: 0; /* No margin needed - notepad floats */
+        }
+        
+        #notepad {
+          width: 250px;
+        }
+        
+        .table th, .table td {
+          white-space: normal;
+        }
+
+        .table-button {
+          padding: 3px 6px !important;
+          font-size: 9px !important;
+          min-width: 40px !important;
+          max-width: 50px !important;
+        }
+
+        .table-button-container {
+          flex-direction: row;
+          gap: 1px;
+        }
+      }
+
+      /* Medium screens (tablets landscape) */
+      @media (max-width: 1199px) and (min-width: 900px) {
+        .grid-container {
+          margin-left: 0; /* No margin needed - notepad floats */
+        }
+        
+        #notepad {
+          width: 210px;
+        }
+        
+        .table {
+          font-size: 12px;
+        }
+
+        .table-button {
+          padding: 2px 4px !important;
+          font-size: 8px !important;
+          min-width: 35px !important;
+          max-width: 40px !important;
+        }
+      }
+
+      /* Small tablets and large phones (portrait tablets) */
+      @media (max-width: 899px) and (min-width: 600px) {
+        .grid-container {
+          margin-left: 0;
+          grid-template-columns: 1fr;
+          padding: 5px;
+        }
+        
+        #notepad {
+          position: relative;
+          width: 100%;
+          height: 200px;
+          margin-bottom: 10px;
+        }
+        
+        .b {
+          grid-template-columns: 1fr;
+        }
+        
+        .item.c, .item.d {
+          margin-bottom: 10px;
+        }
+        
+        header {
+          flex-direction: column;
+          text-align: center;
+          padding: 5px !important;
+        }
+        
+        header h1 {
+          font-size: 18px;
+        }
+        
+        .table {
+          font-size: 11px;
+        }
+        
+        .table th, .table td {
+          padding: 4px;
+        }
+        
+        button {
+          padding: 6px 10px;
+          font-size: 11px;
+        }
+      }
+
+      /* Mobile phones */
+      @media (max-width: 599px) {
+        .grid-container {
+          margin-left: 0;
+          grid-template-columns: 1fr;
+          padding: 2px;
+          gap: 5px;
+        }
+        
+        #notepad {
+          position: relative;
+          width: 100%;
+          height: 150px;
+          margin-bottom: 5px;
+          padding: 5px;
+        }
+        
+        .item {
+          padding: 10px;
+        }
+        
+        header {
+          flex-direction: column;
+          text-align: center;
+          padding: 5px !important;
+        }
+        
+        header h1 {
+          font-size: 16px;
+          margin: 0;
+        }
+        
+        #clock {
+          font-size: 12px;
+          margin-top: 5px;
+        }
+        
+        .table {
+          font-size: 10px;
+          display: block;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+        
+        .table thead, .table tbody, .table th, .table td, .table tr {
+          display: block;
+        }
+        
+        .table thead tr {
+          position: absolute;
+          top: -9999px;
+          left: -9999px;
+        }
+        
+        .table tr {
+          border: 1px solid #ccc;
+          margin-bottom: 5px;
+          padding: 5px;
+          border-radius: 3px;
+        }
+        
+        .table td {
+          border: none;
+          position: relative;
+          padding-left: 50%;
+          white-space: normal;
+          text-align: left;
+        }
+        
+        .table td:before {
+          content: attr(data-label) ": ";
+          position: absolute;
+          left: 6px;
+          width: 45%;
+          text-align: left;
+          font-weight: bold;
+          white-space: nowrap;
+        }
+        
+        button {
+          padding: 4px 8px;
+          font-size: 10px;
+          margin: 1px;
+        }
+        
+        input, select, textarea {
+          font-size: 14px;
+          padding: 8px;
+        }
+        
+        .calldiv, .unitdiv {
+          width: 95%;
+          max-width: none;
+          left: 2.5%;
+          transform: translateY(-50%);
+        }
+        
+        /* Button container for mobile */
+        header + div {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 2px;
+          margin: 5px 0;
+        }
+        
+        header + div button {
+          flex: 1;
+          min-width: calc(50% - 2px);
+          max-width: 120px;
+        }
+      }
+
+      /* Very small screens */
+      @media (max-width: 350px) {
+        .grid-container {
+          padding: 1px;
+        }
+        
+        .item {
+          padding: 5px;
+        }
+        
+        header h1 {
+          font-size: 14px;
+        }
+        
+        .table {
+          font-size: 9px;
+        }
+        
+        button {
+          font-size: 9px;
+          padding: 3px 6px;
+        }
+        
+        #notepad {
+          height: 120px;
+        }
+        
+        header + div button {
+          min-width: calc(33% - 2px);
+          flex: 1;
+        }
+
+        .table-button {
+          font-size: 6px !important;
+          padding: 1px 2px !important;
+          max-width: 35px !important;
+        }
+
+        .table-button-container {
+          gap: 1px;
+        }
+      }
+
+      /* Text truncation utilities */
+      .truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* Table responsive enhancements */
+      @media (max-width: 599px) {
+        .table-container {
+          position: relative;
+        }
+        
+        .table thead {
+          display: none;
+        }
+        
+        .table, .table tbody, .table tr, .table td {
+          display: block;
+          width: 100%;
+        }
+        
+        .table tr {
+          background: #f9f9f9;
+          border: 1px solid #ddd;
+          margin-bottom: 10px;
+          padding: 10px;
+          border-radius: 5px;
+        }
+        
+        .table td {
+          border: none;
+          padding: 5px 0;
+          position: relative;
+          padding-left: 30%;
+          text-align: left;
+        }
+        
+        .table td:before {
+          content: attr(data-label) ": ";
+          position: absolute;
+          left: 0;
+          width: 25%;
+          text-align: left;
+          font-weight: bold;
+          color: #333;
+        }
+
+        .table td button {
+          margin: 2px 0;
+          width: 100%;
+          max-width: 120px;
+        }
+
+        .table-button-container {
+          flex-direction: column;
+          gap: 2px;
+        }
+
+        .table-button {
+          width: 100% !important;
+          max-width: 60px !important;
+          font-size: 7px !important;
+          padding: 2px 3px !important;
+        }
+      }
+
+      /* Fallback table scroll for very cramped conditions */
+      .table-scroll {
+        overflow-x: auto;
+        overflow-y: visible;
+      }
+
+      @media (max-width: 899px) and (min-width: 600px) {
+        .table-container {
+          overflow-x: auto;
+        }
+        
+        .table {
+          min-width: 700px;
+        }
+      }      /* Dark theme adjustments for mobile */
+      body.dark-theme .table tr {
+        background: #333 !important;
+        border-color: #555 !important;
+      }
+
+      body.dark-theme .table td:before {
+        color: #fff !important;
+      }
+
+      /* Form validation styles */
+      .error {
+        border: 2px solid red !important;
+      }
+
+      .success {
+        border: 2px solid green !important;
+      }
+      
+      /* Improved button styles */
+      button {
+        background-color: #444;
+        border: 1px solid #666;
+        color: white;
+        padding: 8px 16px;
+        text-decoration: none;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: all 0.3s;
+      }
+
+      button:hover {
+        background-color: #666;
+        transform: translateY(-1px);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      /* Priority indicators */
+      .priority-high {
+        background-color: #ff4444 !important;
+        color: white !important;
+      }
+
+      .priority-medium {
+        background-color: #ffaa44 !important;
+        color: white !important;
+      }
+
+      .priority-low {
+        background-color: #44ff44 !important;
+        color: black !important;
       }
   
 .grid-container {
@@ -299,6 +974,7 @@
             justify-content: center;
             gap: 10px;
             margin-top: 10px;
+            flex-wrap: wrap;
           "
         >
           <button type="button" onclick="location.href='index.html';">
@@ -306,12 +982,10 @@
           </button>
           <button onclick="openForm()">New Call</button>
           <button onclick="openUnitForm()">New Unit</button>
+          <button onclick="openUnionForm()">New Union</button>
           <button onclick="toggleTheme()">Toggle Theme</button>
           <button onclick="toggleSignal100()">Signal 100</button>
           <button onclick="toggleNotepad()">Toggle Notepad</button>
-
-     
-
         </div>
 
         <div class="calldiv" id="calldiv">
@@ -415,23 +1089,45 @@
             </form>
           </div>
         </div>
+        
+        <div class="unitdiv" id="uniondiv">
+          <!-- "New Union" form -->
+          <div id="unionForm" style="display: block">
+            <form>
+              <label for="unionNumber">Union Number:</label>
+              <input type="number" id="unionNumber" name="unionNumber" min="1" max="999" /><br /><br />
+              <label>Select Units for Union (up to 8):</label>
+              <div id="unionUnitsList" style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin: 10px 0; background-color: #fff; color: #000;">
+                <!-- Available units will be populated here -->
+              </div>
+              <div style="margin-top: 10px;">
+                <span id="selectedUnionCount" style="color: #fff;">Selected: 0/8</span>
+              </div>
+           <input type="button" value="Create Union" onclick="createUnion()" />
+<input type="button" value="Cancel" onclick="closeUnionForm()" />
+
+            </form>
+          </div>
+        </div>
         <div class="item b">
           <div class="item c">
             <section id="display-call-info">
               <!-- Call Table -->
-              <table id="callTable" class="table">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Location</th>
-                    <th>Type</th>
-                    <th>Description</th>
-                    <th>Units</th>
-                    <th>Date/Time</th>
-                  </tr>
-                </thead>
-                <tbody id="callTableBody"></tbody>
-              </table>
+              <div class="table-container" style="overflow-x: auto;">
+                <table id="callTable" class="table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Location</th>
+                      <th>Type</th>
+                      <th>Description</th>
+                      <th>Units</th>
+                      <th>Date/Time</th>
+                    </tr>
+                  </thead>
+                  <tbody id="callTableBody"></tbody>
+                </table>
+              </div>
             </section>
           </div>
 
@@ -439,28 +1135,232 @@
           <div class="item d">
             <section id="display-unit-info">
               <!-- Unit Table -->
-              <table id="unitTable" class="table">
-                <thead>
-                  <tr>
-                    <th>Callsign</th>
-                    <th>Status</th>
-                    <th>Assignment</th>
-                    <th>Supervisor</th>
-                  </tr>
-                </thead>
-                <tbody id="unitTableBody"></tbody>
-              </table>
-              <button onclick="unionUnits()" style="margin-top: 10px;">Union Selected Units</button>
+              <div class="table-container" style="overflow-x: auto;">
+                <table id="unitTable" class="table">
+                  <thead>
+                    <tr>
+                      <th>Callsign</th>
+                      <th>Status</th>
+                      <th>Assignment</th>
+                      <th>Supervisor</th>
+                      <th>Date/Time</th>
+                    </tr>
+                  </thead>
+                  <tbody id="unitTableBody"></tbody>
+                </table>
+              </div>
 
             </section>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Context Menus -->
+    <div id="callContextMenu" class="context-menu">
+      <div class="context-menu-item" onclick="editCall(currentContextRow)">✏️ Edit Call</div>
+      <div class="context-menu-item" onclick="viewCallDetails(currentContextRow)">👁️ View Details</div>
+      <div class="context-menu-item" onclick="assignUnitsToCall(currentContextRow)">👥 Assign Units</div>
+      <div class="context-menu-item" onclick="detachAllUnitsFromCall(currentContextRow)">🔗 Detach All Units</div>
+      <div class="context-menu-item danger" onclick="deleteCall(currentContextRow)">🗑️ Delete Call</div>
+    </div>
+
+    <div id="unitContextMenu" class="context-menu">
+      <div class="context-menu-item" onclick="editUnit(currentContextRow)">✏️ Edit Unit</div>
+      <div class="context-menu-item" onclick="assignUnitToCall(currentContextRow)">📋 Assign to Call</div>
+      <div class="context-menu-item" onclick="detachUnitFromCall(currentContextRow)">🔗 Detach from Call</div>
+      <div class="context-menu-item" onclick="toggleUnitStatus(currentContextRow)">⚡ Toggle Status</div>
+      <div class="context-menu-item" onclick="viewUnitDetails(currentContextRow)">👁️ View Details</div>
+      <div class="context-menu-item" onclick="dissolveUnion(currentContextRow)" id="dissolveUnionOption" style="display: none;">🔓 Dissolve Union</div>
+      <div class="context-menu-item danger" onclick="deleteUnit(currentContextRow)">🗑️ Delete Unit</div>
+    </div>
+
+    <!-- Modal Overlays -->
+    <div id="modalOverlay" class="modal-overlay" onclick="closeAllModals()"></div>
+
+    <!-- Assignment Modal -->
+    <div id="assignmentModal" class="action-modal">
+      <h3>Assign Unit to Call</h3>
+      <div id="assignmentContent">
+        <p><strong>Unit:</strong> <span id="assigningUnit"></span></p>
+        <label for="callSelect">Select Call:</label>
+        <select id="callSelect" style="width: 100%; margin: 10px 0;">
+          <option value="">Choose a call...</option>
+        </select>
+        <div style="margin-top: 20px;">
+          <button onclick="confirmAssignment()" style="background: #28a745;">Assign</button>
+          <button onclick="closeAllModals()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Multi-Unit Assignment Modal -->
+    <div id="multiAssignModal" class="action-modal">
+      <h3>Assign Units to Call</h3>
+      <div id="multiAssignContent">
+        <p><strong>Call:</strong> <span id="assigningCall"></span></p>
+        <label>Select Units:</label>
+        <div id="availableUnits" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+          <!-- Available units will be populated here -->
+        </div>
+        <div style="margin-top: 20px;">
+          <button onclick="confirmMultiAssignment()" style="background: #28a745;">Assign Selected</button>
+          <button onclick="closeAllModals()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Call Modal -->
+    <div id="editCallModal" class="action-modal">
+      <h3>Edit Call</h3>
+      <div id="editCallContent">
+        <label for="editLocation">Location:</label>
+        <input type="text" id="editLocation" style="width: 100%; margin: 10px 0;">
+        
+        <label for="editType">Type:</label>
+        <select id="editType" style="width: 100%; margin: 10px 0;">
+          <!-- Options will be populated -->
+        </select>
+        
+        <label for="editDescription">Description:</label>
+        <input type="text" id="editDescription" style="width: 100%; margin: 10px 0;">
+        
+        <div style="margin-top: 20px;">
+          <button onclick="saveCallEdit()" style="background: #007bff;">Save Changes</button>
+          <button onclick="closeAllModals()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Unit Modal -->
+    <div id="editUnitModal" class="action-modal">
+      <h3>Edit Unit</h3>
+      <div id="editUnitContent">
+        <label for="editCallsign">Callsign:</label>
+        <input type="text" id="editCallsign" style="width: 100%; margin: 10px 0;">
+        
+        <label for="editSupervisor">Supervisor:</label>
+        <input type="checkbox" id="editSupervisor" style="margin: 10px 0;">
+        
+        <div style="margin-top: 20px;">
+          <button onclick="saveUnitEdit()" style="background: #007bff;">Save Changes</button>
+          <button onclick="closeAllModals()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attach Units to Call Modal -->
+    <div id="attachUnitsModal" class="action-modal">
+      <h3>Attach Units to Call</h3>
+      <div id="attachUnitsContent">
+        <p><strong>Call:</strong> <span id="attachingToCall"></span></p>
+        <label>Select Units to Attach:</label>
+        <div id="allUnitsForAttach" style="max-height: 250px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+          <!-- All units will be populated here -->
+        </div>
+        <div style="margin-top: 20px;">
+          <button onclick="confirmAttachUnits()" style="background: #28a745;">Attach Selected</button>
+          <button onclick="closeAllModals()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="detailsModal" class="action-modal">
+      <h3 id="detailsTitle">Details</h3>
+      <div id="detailsContent">
+        <!-- Details will be populated here -->
+      </div>
+      <div style="margin-top: 20px;">
+        <button onclick="closeAllModals()">Close</button>
+      </div>
+    </div>
     <script>
-      // Initialize an empty array to store calls and units
-      let calls = []
-      let units = []
+      // Initialize arrays with data from localStorage or empty arrays
+      let calls = JSON.parse(localStorage.getItem('webcad_calls')) || []
+      let units = JSON.parse(localStorage.getItem('webcad_units')) || []
+      let callCounter = parseInt(localStorage.getItem('webcad_callCounter')) || 0
+      let currentContextRow = null
+
+      // Save data to localStorage
+      function saveToStorage() {
+        localStorage.setItem('webcad_calls', JSON.stringify(calls))
+        localStorage.setItem('webcad_units', JSON.stringify(units))
+        localStorage.setItem('webcad_callCounter', callCounter.toString())
+      }
+
+      // Context Menu System
+      document.addEventListener('click', function(e) {
+        document.getElementById('callContextMenu').style.display = 'none'
+        document.getElementById('unitContextMenu').style.display = 'none'
+        
+        // Remove context-active class from all rows
+        document.querySelectorAll('.context-active').forEach(row => {
+          row.classList.remove('context-active')
+        })
+      })
+
+      document.addEventListener('contextmenu', function(e) {
+        const row = e.target.closest('tr')
+        if (!row || row.parentElement.tagName === 'THEAD') return
+        
+        e.preventDefault()
+        
+        // Remove previous context-active
+        document.querySelectorAll('.context-active').forEach(r => r.classList.remove('context-active'))
+        row.classList.add('context-active')
+        
+        currentContextRow = row
+        
+        const isCallTable = row.closest('#callTable')
+        const isUnitTable = row.closest('#unitTable')
+        
+        if (isCallTable) {
+          showContextMenu('callContextMenu', e.pageX, e.pageY)
+        } else if (isUnitTable) {
+          // Check if this is a union to show/hide dissolve option
+          const callsign = row.getAttribute('data-callsign')
+          const unit = units.find(u => u.callsign === callsign)
+          const dissolveOption = document.getElementById('dissolveUnionOption')
+          if (unit && unit.isUnion) {
+            dissolveOption.style.display = 'block'
+          } else {
+            dissolveOption.style.display = 'none'
+          }
+          showContextMenu('unitContextMenu', e.pageX, e.pageY)
+        }
+      })
+
+      function showContextMenu(menuId, x, y) {
+        const menu = document.getElementById(menuId)
+        menu.style.display = 'block'
+        menu.style.left = x + 'px'
+        menu.style.top = y + 'px'
+        
+        // Adjust position if menu goes off screen
+        const rect = menu.getBoundingClientRect()
+        if (rect.right > window.innerWidth) {
+          menu.style.left = (x - rect.width) + 'px'
+        }
+        if (rect.bottom > window.innerHeight) {
+          menu.style.top = (y - rect.height) + 'px'
+        }
+      }
+
+      // Load data on page load
+      function loadStoredData() {
+        // Reload calls
+        calls.forEach(call => {
+          addCallToTable(call)
+        })
+        
+        // Reload units
+        units.forEach(unit => {
+          addUnitToTable(unit)
+        })
+        
+        sortUnitTable()
+      }
 
       // Function to open the "New Call" form
       function openForm() {
@@ -486,20 +1386,42 @@
     return; // Stop the function if validation fails
   }
 
-  // Create a unique ID for the call
-  let id = calls.length + 1;
+  // Sanitize inputs to prevent XSS
+  location = sanitizeInput(location);
+  type = sanitizeInput(type);
+  description = sanitizeInput(description);
 
-  // Add the call to the calls array
-  calls.push({
+  // Create a unique ID for the call
+  callCounter++;
+  let id = callCounter;
+
+  // Create call object
+  let call = {
     id: id,
     location: location,
     type: type,
     description: description,
     units: units,
     dateTime: dateTime,
-  });
+  };
 
-  // Add the call to the table (rest of your existing code here)
+  // Add the call to the calls array
+  calls.push(call);
+
+  // Add to table
+  addCallToTable(call);
+
+  // Save to storage
+  saveToStorage();
+
+  // Clear form and close
+  document.getElementById("location").value = "";
+  document.getElementById("type").value = "";
+  document.getElementById("description").value = "";
+  closeForm();
+}
+
+function addCallToTable(call) {
   let table = document.getElementById("callTableBody");
   let row = table.insertRow();
   let idCell = row.insertCell(0);
@@ -508,32 +1430,28 @@
   let descriptionCell = row.insertCell(3);
   let unitsCell = row.insertCell(4);
   let dateTimeCell = row.insertCell(5);
-  let editCell = row.insertCell(6);
-  let deleteCell = row.insertCell(7);
 
-  idCell.innerHTML = id;
-  locationCell.innerHTML = location;
-  typeCell.innerHTML = type;
-  descriptionCell.innerHTML = description;
-  unitsCell.innerHTML = units;
-  dateTimeCell.innerHTML = dateTime;
+  // Add data attributes
+  row.setAttribute('data-call-id', call.id);
 
-  let editButton = document.createElement("button");
-  editButton.innerHTML = "Edit";
-  editButton.onclick = function () {
-    editCall(id);
-  };
-  row.cells[6].appendChild(editButton);
+  // Add data labels for mobile responsiveness
+  idCell.setAttribute('data-label', 'ID');
+  locationCell.setAttribute('data-label', 'Location');
+  typeCell.setAttribute('data-label', 'Type');
+  descriptionCell.setAttribute('data-label', 'Description');
+  unitsCell.setAttribute('data-label', 'Units');
+  dateTimeCell.setAttribute('data-label', 'Date/Time');
 
-  let deleteButton = document.createElement("button");
-  deleteButton.innerHTML = "Delete";
-  deleteButton.onclick = function () {
-    deleteCall(row);
-  };
-  row.cells[7].appendChild(deleteButton);
+  idCell.innerHTML = call.id;
+  locationCell.innerHTML = call.location;
+  typeCell.innerHTML = call.type;
+  descriptionCell.innerHTML = call.description;
+  unitsCell.innerHTML = call.units || "";
+  dateTimeCell.innerHTML = call.dateTime;
 
-  // Close the "New Call" form
-  closeForm();
+  // Make row right-clickable
+  row.style.cursor = 'pointer';
+  row.title = 'Right-click for options';
 }
 
 
@@ -547,369 +1465,923 @@
         document.getElementById("unitdiv").style.display = "none"
       }
 
+      // Function to open the "New Union" form
+      function openUnionForm() {
+        document.getElementById("uniondiv").style.display = "block"
+        populateUnionUnitsList()
+        // Set next available union number
+        document.getElementById("unionNumber").value = getNextUnionNumber()
+      }
+
+      // Function to close the "New Union" form
+      function closeUnionForm() {
+        document.getElementById("uniondiv").style.display = "none"
+        clearUnionSelection()
+      }
+
+      // Get next available union number
+      function getNextUnionNumber() {
+        let maxUnionNum = 0
+        units.forEach(unit => {
+          if (unit.callsign.startsWith('U') && !isNaN(unit.callsign.substring(1))) {
+            const num = parseInt(unit.callsign.substring(1))
+            if (num > maxUnionNum) maxUnionNum = num
+          }
+        })
+        return maxUnionNum + 1
+      }
+
+      // Populate available units for union
+      function populateUnionUnitsList() {
+        const container = document.getElementById('unionUnitsList')
+        container.innerHTML = ''
+        
+        // Get individual units (not unions)
+        const availableUnits = units.filter(u => !u.callsign.startsWith('U') && !u.isUnionMember)
+        
+        if (availableUnits.length === 0) {
+          container.innerHTML = '<p style="color: #666; text-align: center;">No available units for union</p>'
+          return
+        }
+        
+        availableUnits.forEach(unit => {
+          const div = document.createElement('div')
+          div.style.marginBottom = '8px'
+          div.style.padding = '5px'
+          div.style.border = '1px solid #ddd'
+          div.style.borderRadius = '3px'
+          div.innerHTML = `
+            <label style="display: flex; align-items: center; cursor: pointer;">
+              <input type="checkbox" value="${unit.callsign}" onchange="updateUnionSelection()" 
+                     style="margin-right: 10px; width: 16px; height: 16px;">
+              <span style="font-weight: bold;">${unit.callsign}</span>
+              <span style="margin-left: 10px; color: #666;">
+                (${unit.status}) - ${unit.assignment}${unit.supervisor ? ' - SUPERVISOR' : ''}
+              </span>
+            </label>
+          `
+          container.appendChild(div)
+        })
+      }
+
+      // Update union selection count
+      function updateUnionSelection() {
+        const checkboxes = document.querySelectorAll('#unionUnitsList input[type="checkbox"]:checked')
+        const count = checkboxes.length
+        document.getElementById('selectedUnionCount').textContent = `Selected: ${count}/8`
+        
+        // Disable unchecked checkboxes if we've reached the limit
+        const allCheckboxes = document.querySelectorAll('#unionUnitsList input[type="checkbox"]')
+        allCheckboxes.forEach(cb => {
+          if (!cb.checked && count >= 8) {
+            cb.disabled = true
+          } else {
+            cb.disabled = false
+          }
+        })
+      }
+
+      // Clear union selection
+      function clearUnionSelection() {
+        const checkboxes = document.querySelectorAll('#unionUnitsList input[type="checkbox"]')
+        checkboxes.forEach(cb => {
+          cb.checked = false
+          cb.disabled = false
+        })
+        document.getElementById('selectedUnionCount').textContent = 'Selected: 0/8'
+      }
+
+      // Create union
+      function createUnion() {
+        const unionNumber = document.getElementById("unionNumber").value.trim()
+        const checkboxes = document.querySelectorAll('#unionUnitsList input[type="checkbox"]:checked')
+        const selectedCallsigns = Array.from(checkboxes).map(cb => cb.value)
+
+        // Validation
+        if (!unionNumber || isNaN(unionNumber) || unionNumber < 1) {
+          alert("Please enter a valid union number.")
+          return
+        }
+
+        if (selectedCallsigns.length < 2) {
+          alert("Please select at least 2 units for the union.")
+          return
+        }
+
+        if (selectedCallsigns.length > 8) {
+          alert("Cannot select more than 8 units for a union.")
+          return
+        }
+
+        const unionCallsign = `U${unionNumber}`
+
+        // Check for duplicate union callsign
+        if (units.find(unit => unit.callsign === unionCallsign)) {
+          alert("A unit with this union callsign already exists.")
+          return
+        }
+
+        // Get selected units
+        const selectedUnits = units.filter(u => selectedCallsigns.includes(u.callsign))
+        const hasSupervisor = selectedUnits.some(u => u.supervisor)
+
+        // Create union unit
+        const union = {
+          callsign: unionCallsign,
+          supervisor: hasSupervisor,
+          status: "Available",
+          assignment: "Unassigned",
+          isUnion: true,
+          unionMembers: selectedUnits.map(u => ({
+            callsign: u.callsign,
+            supervisor: u.supervisor,
+            originalStatus: u.status,
+            originalAssignment: u.assignment
+          }))
+        }
+
+        // Mark individual units as union members and remove from main list
+        selectedUnits.forEach(unit => {
+          const index = units.findIndex(u => u.callsign === unit.callsign)
+          if (index !== -1) {
+            units.splice(index, 1)
+          }
+        })
+
+        // Add union to units array
+        units.push(union)
+
+        // Add to table
+        addUnitToTable(union)
+
+        // Save to storage
+        saveToStorage()
+
+        // Clear form and close
+        document.getElementById("unionNumber").value = ""
+        clearUnionSelection()
+        closeUnionForm()
+        
+        refreshUnitTable()
+        alert(`Union ${unionCallsign} created successfully with ${selectedCallsigns.length} units.`)
+      }
+
    function addUnit() {
   // Get the values from the form
   let callsign = document.getElementById("callsign").value.trim();
   let supervisor = document.getElementById("supervisor").checked;
-  let status = "Available";
 
   // Validation: Check for blank callsign
   if (callsign === "") {
     alert("Please enter a Callsign before submitting the unit.");
-    return; // Stop the function if validation fails
+    return;
   }
 
-  // Add the unit to the units array
-  units.push({
+  // Check for duplicate callsign
+  if (units.find(unit => unit.callsign === callsign)) {
+    alert("A unit with this callsign already exists.");
+    return;
+  }
+
+  // Create unit object
+  let unit = {
     callsign: callsign,
     supervisor: supervisor,
-    status: status,
-  });
+    status: "Available",
+    assignment: "Unassigned"
+  };
 
-  // Add the unit to the table (rest of your existing code here)
+  // Add the unit to the units array
+  units.push(unit);
+
+  // Add to table
+  addUnitToTable(unit);
+
+  // Save to storage
+  saveToStorage();
+
+  // Clear form and close
+  document.getElementById("callsign").value = "";
+  document.getElementById("supervisor").checked = false;
+  closeUnitForm();
+  
+  sortUnitTable();
+}
+
+function addUnitToTable(unit) {
   let table = document.getElementById("unitTableBody");
   let row = table.insertRow();
   let callsignCell = row.insertCell(0);
   let statusCell = row.insertCell(1);
   let assignmentCell = row.insertCell(2);
   let supervisorCell = row.insertCell(3);
-  let assignCell = row.insertCell(4);
-  let deleteCell = row.insertCell(5);
-// Add a checkbox for selecting the unit
-let selectCell = row.insertCell(6);
-let checkbox = document.createElement("input");
-checkbox.type = "checkbox";
-checkbox.classList.add("unit-selector");
-selectCell.appendChild(checkbox);
+  let dateTimeCell = row.insertCell(4);
 
-  callsignCell.innerHTML = callsign;
-  statusCell.innerHTML = `<span class="${status.toLowerCase()}">${status}</span>`;
-  assignmentCell.innerHTML = "Unassigned";
-  supervisorCell.innerHTML = supervisor ? "Yes" : "No";
+  // Add data attributes
+  row.setAttribute('data-callsign', unit.callsign);
 
- let assignButton = document.createElement("button");
-assignButton.innerHTML = "Assign";
-assignButton.onclick = function () {
-  assignUnit(row);
-};
+  // Add data labels for mobile responsiveness
+  callsignCell.setAttribute('data-label', 'Callsign');
+  statusCell.setAttribute('data-label', 'Status');
+  assignmentCell.setAttribute('data-label', 'Assignment');
+  supervisorCell.setAttribute('data-label', 'Supervisor');
+  dateTimeCell.setAttribute('data-label', 'Date/Time');
 
-let busyButton = document.createElement("button");
-busyButton.innerHTML = "Busy";
-busyButton.onclick = function () {
-  toggleBusy(row, busyButton);
-};
+  callsignCell.innerHTML = unit.isUnion ? 
+    `${unit.callsign} <span style="color: #007bff; font-size: 10px;">[UNION]</span>` : 
+    unit.callsign;
+  
+  // Status with badge styling
+  const statusClass = unit.status.toLowerCase().replace(' ', '-');
+  statusCell.innerHTML = `<span class="status-badge status-${statusClass}">${unit.status}</span>`;
+  
+  assignmentCell.innerHTML = unit.assignment || "Unassigned";
+  supervisorCell.innerHTML = unit.supervisor ? "Yes" : "No";
+  dateTimeCell.innerHTML = new Date().toLocaleString();
 
-assignCell.appendChild(assignButton);
-assignCell.appendChild(busyButton);
-
-
-  let deleteButton = document.createElement("button");
-  deleteButton.innerHTML = "Delete";
-  deleteButton.onclick = function () {
-    deleteUnit(row);
-  };
-  row.cells[5].appendChild(deleteButton);
-
-  // Close the "New Unit" form
-  closeUnitForm();
-  sortUnitTable();
-
+  // Make row right-clickable
+  row.style.cursor = 'pointer';
+  row.title = 'Right-click for options';
 }
 
-function editCall(id) {
-  let row = document.getElementById("callTable").rows[id];
-
-  let currentLocation = row.cells[1].innerText;
-  let currentType = row.cells[2].innerText;
-  let currentDescription = row.cells[3].innerText;
-
-  let locationInput = document.createElement("input");
-  locationInput.type = "text";
-  locationInput.value = currentLocation;
-  row.cells[1].innerHTML = "";
-  row.cells[1].appendChild(locationInput);
-
-  let typeSelect = document.createElement("select");
-  typeSelect.innerHTML = document.getElementById("type").innerHTML; // Copy the options
-  row.cells[2].innerHTML = "";
-  row.cells[2].appendChild(typeSelect);
-
-  let tomSelectInstance = new TomSelect(typeSelect, {
-    create: false,
-    sortField: {
-      field: "text",
-      direction: "asc"
-    },
-    onInitialize: function() {
-      this.setValue(currentType); // Correctly set after init
-    }
-  });
-
-  let descriptionInput = document.createElement("input");
-  descriptionInput.type = "text";
-  descriptionInput.value = currentDescription;
-  row.cells[3].innerHTML = "";
-  row.cells[3].appendChild(descriptionInput);
-
-  row.cells[6].innerHTML = "";
-  let saveButton = document.createElement("button");
-  saveButton.innerHTML = "Save";
-  saveButton.onclick = function () {
-    saveCall(id);
-  };
-  row.cells[6].appendChild(saveButton);
-}
-
-
-
-    function saveCall(id) {
-  let row = document.getElementById("callTable").rows[id];
-
-  // Grab the new edited values
-  let newLocation = row.cells[1].querySelector("input").value;
-  let newType = row.cells[2].querySelector("select").tomselect.getValue(); // <-- get from Tom Select
-  let newDescription = row.cells[3].querySelector("input").value;
-
-  // Update the calls array
-  calls[id - 1].location = newLocation;
-  calls[id - 1].type = newType;
-  calls[id - 1].description = newDescription;
-
-  // Update the table
-  row.cells[1].innerText = newLocation;
-  row.cells[2].innerText = newType;
-  row.cells[3].innerText = newDescription;
-
-  // Restore Edit button
-  row.cells[6].innerHTML = "";
-  let editButton = document.createElement("button");
-  editButton.innerHTML = "Edit";
-  editButton.onclick = function () {
-    editCall(id);
-  };
-  row.cells[6].appendChild(editButton);
-}
-
-      // Function to assign a unit to a call
-      function assignUnit(row) {
-        // Get the row of the unit to be assigned
-        let unitRow = row
-
-        // Get the callsign of the unit to be assigned
-        let callsign = unitRow.cells[0].innerHTML
-
-       if (unitRow.cells[2].innerHTML !== "Unassigned") {
-  // Save call ID BEFORE resetting assignment
-  let callId = unitRow.cells[2].textContent.replace("Call #", "").trim();
-
-  // Reset unit status and assignment
-  unitRow.cells[1].innerHTML = `<span class="available">Available</span>`;
-  unitRow.cells[2].innerHTML = "Unassigned";
-
-  // Remove the unit's callsign from the call's unit list
-  let callTable = document.getElementById("callTable");
-  for (let i = 1; i < callTable.rows.length; i++) {
-    let callRow = callTable.rows[i];
-    let rowCallId = callRow.cells[0].textContent.trim();
-    if (rowCallId === callId) {
-      let unitsCell = callRow.cells[4];
-      let unitsArray = unitsCell.textContent.split(", ").map(u => u.trim());
-      let index = unitsArray.indexOf(callsign);
-      if (index !== -1) {
-        unitsArray.splice(index, 1);
-        unitsCell.textContent = unitsArray.join(", ");
+      // Modal Management
+      function closeAllModals() {
+        document.getElementById('modalOverlay').style.display = 'none'
+        document.querySelectorAll('.action-modal').forEach(modal => {
+          modal.style.display = 'none'
+        })
       }
-      break;
-    }
-  }
 
-  // Change button back to "Assign"
-  let assignDetachButton = unitRow.cells[4].querySelector("button");
-  assignDetachButton.innerHTML = "Assign";
-  assignDetachButton.onclick = function () {
-    assignUnit(row);
-  }
-}
+      function showModal(modalId) {
+        document.getElementById('modalOverlay').style.display = 'block'
+        document.getElementById(modalId).style.display = 'block'
+      }
 
-        else {
-          // Create a pop-up to select a call to assign the unit to
-          let popup = document.createElement("div")
-          popup.style.position = "absolute"
-          popup.style.top = "50%"
-          popup.style.left = "50%"
-          popup.style.transform = "translate(-50%, -50%)"
-          popup.style.backgroundColor = "white"
-          popup.style.border = "1px solid black"
-          popup.style.padding = "20px"
-          popup.style.zIndex = "1"
-          let selectLabel = document.createElement("label")
-          selectLabel.innerHTML = "Select a call to assign the unit to:"
-          let select = document.createElement("select")
-          select.id = "callSelect"
+      // Context Menu Actions
+      function editCall(row) {
+        if (!row) return
+        const callId = parseInt(row.getAttribute('data-call-id'))
+        const call = calls.find(c => c.id === callId)
+        if (!call) return
 
-          for (let i = 0; i < calls.length; i++) {
-            let option = document.createElement("option")
-            option.value = calls[i].id
-            option.text = "Call #" + calls[i].id
-            select.appendChild(option)
-          }
-          let submitButton = document.createElement("button")
-          submitButton.innerHTML = "Submit"
-          submitButton.onclick = function () {
-            // Get the selected call ID
-            let callId = document.getElementById("callSelect").value
+        document.getElementById('editLocation').value = call.location
+        document.getElementById('editDescription').value = call.description
+        
+        // Populate type dropdown
+        const editTypeSelect = document.getElementById('editType')
+        editTypeSelect.innerHTML = document.getElementById('type').innerHTML
+        editTypeSelect.value = call.type
 
-            // Update the unit's status and assignment
-            unitRow.cells[1].innerHTML = `<span class="busy">Busy</span>`
+        // Store current call ID for saving
+        editCallModal.currentCallId = callId
+        
+        showModal('editCallModal')
+      }
 
-            unitRow.cells[2].innerHTML = "Call #" + callId
+      function saveCallEdit() {
+        const callId = editCallModal.currentCallId
+        const call = calls.find(c => c.id === callId)
+        if (!call) return
 
-            // Update the call's units
-            let callRow = document.getElementById("callTable").rows[callId]
-            let unitsCell = callRow.cells[4]
-            if (unitsCell.innerHTML === "") {
-              unitsCell.innerHTML = callsign
-            } else {
-              unitsCell.innerHTML += ", " + callsign
+        call.location = document.getElementById('editLocation').value
+        call.type = document.getElementById('editType').value
+        call.description = document.getElementById('editDescription').value
+
+        // Update table
+        const row = document.querySelector(`tr[data-call-id="${callId}"]`)
+        if (row) {
+          row.cells[1].textContent = call.location
+          row.cells[2].textContent = call.type
+          row.cells[3].textContent = call.description
+        }
+
+        saveToStorage()
+        closeAllModals()
+      }
+
+      function editUnit(row) {
+        if (!row) return
+        const callsign = row.getAttribute('data-callsign')
+        const unit = units.find(u => u.callsign === callsign)
+        if (!unit) return
+
+        document.getElementById('editCallsign').value = unit.callsign
+        document.getElementById('editSupervisor').checked = unit.supervisor
+
+        // Store current unit callsign for saving
+        editUnitModal.currentCallsign = callsign
+        
+        showModal('editUnitModal')
+      }
+
+      function saveUnitEdit() {
+        const oldCallsign = editUnitModal.currentCallsign
+        const newCallsign = document.getElementById('editCallsign').value
+        const supervisor = document.getElementById('editSupervisor').checked
+        
+        const unit = units.find(u => u.callsign === oldCallsign)
+        if (!unit) return
+
+        // Check for duplicate callsign if changed
+        if (newCallsign !== oldCallsign && units.find(u => u.callsign === newCallsign)) {
+          alert("A unit with this callsign already exists.")
+          return
+        }
+
+        // Update unit
+        unit.callsign = newCallsign
+        unit.supervisor = supervisor
+
+        // Update calls if callsign changed
+        if (newCallsign !== oldCallsign) {
+          calls.forEach(call => {
+            if (call.units && call.units.includes(oldCallsign)) {
+              call.units = call.units.replace(oldCallsign, newCallsign)
             }
-            console.log("Change to Detach Button start")
-            // Change the button to "Detach" after assigning
-            let assignDetachButton = unitRow.cells[4].querySelector("button")
-            assignDetachButton.innerHTML = "Detach"
-            assignDetachButton.onclick = function () {
-              assignUnit(row)
-            }
-            // Remove the pop-up
-            popup.remove()
-          }
-          let cancelButton = document.createElement("button")
-          cancelButton.innerHTML = "Cancel"
-          cancelButton.onclick = function () {
-            // Remove the pop-up
-            popup.remove()
-          }
-          popup.appendChild(selectLabel)
-          popup.appendChild(document.createElement("br"))
-          popup.appendChild(select)
-          popup.appendChild(document.createElement("br"))
-          let assignButton = document.createElement("button")
-          assignButton.innerHTML = "Assign"
-          assignButton.onclick = function () {
-            let callId = document.getElementById("callSelect").value
-            unitRow.cells[1].innerHTML = "Busy"
-            unitRow.cells[2].innerHTML = "Call #" + callId
-            let callRow = document.getElementById("callTable").rows[callId]
-            let unitsCell = callRow.cells[4]
-            if (unitsCell.innerHTML === "") {
-              unitsCell.innerHTML = callsign
-            } else {
-              unitsCell.innerHTML += ", " + callsign
-            }
+          })
+        }
 
-            popup.remove()
+        refreshTables()
+        saveToStorage()
+        closeAllModals()
+      }
+
+      function detachUnitFromCall(row) {
+        if (!row) return
+        const callsign = row.getAttribute('data-callsign')
+        const unit = units.find(u => u.callsign === callsign)
+        
+        if (!unit || unit.assignment === "Unassigned") {
+          alert("Unit is not assigned to any call.")
+          return
+        }
+
+        if (confirm(`Detach ${callsign} from their current assignment?`)) {
+          // Extract call ID from assignment
+          const assignmentMatch = unit.assignment.match(/Call #(\d+)/)
+          if (assignmentMatch) {
+            const callId = parseInt(assignmentMatch[1])
+            const call = calls.find(c => c.id === callId)
+            
+            // Remove unit from call's units list
+            if (call && call.units) {
+              const unitsList = call.units.split(', ').filter(u => u !== callsign)
+              call.units = unitsList.join(', ')
+            }
           }
 
-          popup.appendChild(submitButton)
-          popup.appendChild(cancelButton)
-          document.body.appendChild(popup)
+          unit.assignment = "Unassigned"
+          unit.status = "Available"
+          
+          refreshTables()
+          saveToStorage()
         }
       }
-function toggleBusy(row, button) {
-  const statusCell = row.cells[1];
-  const assignmentCell = row.cells[2];
 
-  if (assignmentCell.innerText === "Unassigned") {
-    if (statusCell.innerText === "Available") {
-      statusCell.innerHTML = `<span class="busy">Busy</span>`;
-      button.innerText = "Available";
-    } else {
-      statusCell.innerHTML = `<span class="available">Available</span>`;
-      button.innerText = "Busy";
-    }
-  } else {
-    alert("This unit is already assigned to a call and cannot toggle busy.");
-  }
-}
+      function detachAllUnitsFromCall(row) {
+        if (!row) return
+        const callId = parseInt(row.getAttribute('data-call-id'))
+        const call = calls.find(c => c.id === callId)
+        
+        if (!call || !call.units) {
+          alert("No units assigned to this call.")
+          return
+        }
+
+        if (confirm(`Detach all units from Call #${callId}?`)) {
+          const assignedUnits = call.units.split(', ')
+          
+          // Update all assigned units
+          assignedUnits.forEach(callsign => {
+            const unit = units.find(u => u.callsign === callsign)
+            if (unit) {
+              unit.assignment = "Unassigned"
+              unit.status = "Available"
+            }
+          })
+
+          call.units = ""
+          
+          refreshTables()
+          saveToStorage()
+        }
+      }
 
       function deleteCall(row) {
+        if (!row) return
+        const callId = parseInt(row.getAttribute('data-call-id'))
+        
         if (confirm("Are you sure you want to delete this call?")) {
-          // Get the ID of the call to be deleted
-          let callId = row.cells[0].textContent
-
-          // Find the index of the call in the calls array
-          let callIndex = calls.findIndex((call) => call.id == callId)
-
-          if (callIndex !== -1) {
-            // Remove the call from the calls array
-            calls.splice(callIndex, 1)
-
-            // Remove the call row from the callTable
-            let callTable = document.getElementById("callTable")
-            callTable.deleteRow(row.rowIndex)
-
-            // Update units assigned to this call
-            let unitTable = document.getElementById("unitTable")
-            let unitRows = unitTable.rows
-
-            for (let i = 1; i < unitRows.length; i++) {
-              let assignedCall = unitRows[i].cells[2].textContent.replace(
-                "Call #",
-                "",
-              )
-              if (assignedCall === callId) {
-                unitRows[i].cells[1].textContent = "Available"
-                unitRows[i].cells[2].textContent = "Unassigned"
-              }
-            }
-          } else {
-            alert("Call not found in the array.")
+          // Remove from array
+          const index = calls.findIndex(call => call.id === callId)
+          if (index !== -1) {
+            calls.splice(index, 1)
           }
+          
+          // Remove from table
+          row.remove()
+          
+          // Update any assigned units
+          units.forEach(unit => {
+            if (unit.assignment === `Call #${callId}`) {
+              unit.assignment = "Unassigned"
+              unit.status = "Available"
+            }
+          })
+          
+          refreshUnitTable()
+          saveToStorage()
         }
       }
-      function deleteUnit(unitRow) {
-        if (confirm("Are you sure you want to delete this unit?")) {
-          // Get the callsign of the unit to be deleted
-          let callsign = unitRow.cells[0].textContent
 
-          // Find the index of the unit in the units array
-          let unitIndex = units.findIndex((unit) => unit.callsign === callsign)
+      function assignUnitToCall(row) {
+        if (!row) return
+        const callsign = row.getAttribute('data-callsign')
+        
+        document.getElementById('assigningUnit').textContent = callsign
+        
+        // Populate call select
+        const callSelect = document.getElementById('callSelect')
+        callSelect.innerHTML = '<option value="">Choose a call...</option>'
+        calls.forEach(call => {
+          const option = document.createElement('option')
+          option.value = call.id
+          option.textContent = `Call #${call.id} - ${call.location}`
+          callSelect.appendChild(option)
+        })
+        
+        assignmentModal.currentUnit = callsign
+        showModal('assignmentModal')
+      }
 
-          if (unitIndex !== -1) {
-            // Remove the unit from the units array
-            units.splice(unitIndex, 1)
+      function confirmAssignment() {
+        const callId = document.getElementById('callSelect').value
+        const callsign = assignmentModal.currentUnit
+        
+        if (!callId) {
+          alert('Please select a call')
+          return
+        }
+        
+        // Update unit
+        const unit = units.find(u => u.callsign === callsign)
+        if (unit) {
+          unit.assignment = `Call #${callId}`
+          unit.status = "Busy"
+        }
+        
+        // Update call's units list
+        const call = calls.find(c => c.id == callId)
+        if (call) {
+          const currentUnits = call.units ? call.units.split(', ') : []
+          if (!currentUnits.includes(callsign)) {
+            currentUnits.push(callsign)
+            call.units = currentUnits.join(', ')
+          }
+        }
+        
+        refreshTables()
+        saveToStorage()
+        closeAllModals()
+      }
 
-            // Remove the unit row from the unitTable
-            let unitTable = document.getElementById("unitTable")
-            unitTable.deleteRow(unitRow.rowIndex)
+      function toggleUnitStatus(row) {
+        if (!row) return
+        const callsign = row.getAttribute('data-callsign')
+        const unit = units.find(u => u.callsign === callsign)
+        
+        if (!unit) return
+        
+        if (unit.assignment !== "Unassigned") {
+          alert("Cannot change status of assigned unit. Detach from call first.")
+          return
+        }
+        
+        unit.status = unit.status === "Available" ? "Busy" : "Available"
+        
+        // Update status cell
+        const statusCell = row.cells[1]
+        const statusClass = unit.status.toLowerCase().replace(' ', '-')
+        statusCell.innerHTML = `<span class="status-badge status-${statusClass}">${unit.status}</span>`
+        
+        saveToStorage()
+      }
 
-            // Update any call rows that have this unit in their units list
-            let callTable = document.getElementById("callTable")
-            let callRows = callTable.rows
+      function deleteUnit(row) {
+        if (!row) return
+        const callsign = row.getAttribute('data-callsign')
+        const unit = units.find(u => u.callsign === callsign)
+        
+        let confirmMessage = `Are you sure you want to delete unit ${callsign}?`
+        if (unit && unit.isUnion) {
+          confirmMessage = `Are you sure you want to delete union ${callsign}? This will permanently remove the union and all member units.`
+        }
+        
+        if (confirm(confirmMessage)) {
+          // Remove from array
+          const index = units.findIndex(unit => unit.callsign === callsign)
+          if (index !== -1) {
+            units.splice(index, 1)
+          }
+          
+          // Remove from table
+          row.remove()
+          
+          // Update calls that had this unit
+          calls.forEach(call => {
+            if (call.units) {
+              const unitList = call.units.split(', ').filter(u => u !== callsign)
+              call.units = unitList.join(', ')
+            }
+          })
+          
+          refreshCallTable()
+          saveToStorage()
+        }
+      }
 
-            for (let i = 1; i < callRows.length; i++) {
-              let unitsCell = callRows[i].cells[4]
-              let callUnits = unitsCell.textContent.split(", ")
-              let unitIndex = callUnits.indexOf(callsign)
-              if (unitIndex !== -1) {
-                callUnits.splice(unitIndex, 1)
-                unitsCell.textContent = callUnits.join(", ")
+      // Dissolve union function
+      function dissolveUnion(row) {
+        if (!row) return
+        const callsign = row.getAttribute('data-callsign')
+        const union = units.find(u => u.callsign === callsign && u.isUnion)
+        
+        if (!union) {
+          alert("This is not a union.")
+          return
+        }
+        
+        if (confirm(`Are you sure you want to dissolve union ${callsign}? This will restore all individual units.`)) {
+          // Restore individual units
+          union.unionMembers.forEach(member => {
+            const restoredUnit = {
+              callsign: member.callsign,
+              supervisor: member.supervisor,
+              status: "Available", // Reset to available when dissolved
+              assignment: "Unassigned", // Reset assignment when dissolved
+              isUnionMember: false
+            }
+            units.push(restoredUnit)
+          })
+          
+          // Remove union from array
+          const index = units.findIndex(u => u.callsign === callsign)
+          if (index !== -1) {
+            units.splice(index, 1)
+          }
+          
+          // Update calls that had this union assigned
+          calls.forEach(call => {
+            if (call.units && call.units.includes(callsign)) {
+              const unitList = call.units.split(', ').filter(u => u !== callsign)
+              call.units = unitList.join(', ')
+            }
+          })
+          
+          refreshTables()
+          saveToStorage()
+          
+          alert(`Union ${callsign} has been dissolved. Individual units have been restored.`)
+        }
+      }
 
-                // If there are no units assigned to the call, update the unit status
-                if (callUnits.length === 0) {
-                  let callId = callRows[i].cells[0].textContent
-                  callRows[i].cells[4].textContent = "";
-                  let assignDetachButton =
-                    callRows[i].cells[5].querySelector("button")
-                  assignDetachButton.innerHTML = "Assign"
-                  assignDetachButton.onclick = function () {
-                    assignUnit(unitRow)
-                  }
+      function viewCallDetails(row) {
+        if (!row) return
+        const callId = parseInt(row.getAttribute('data-call-id'))
+        const call = calls.find(c => c.id === callId)
+        if (!call) return
+
+        document.getElementById('detailsTitle').textContent = `Call #${call.id} Details`
+        document.getElementById('detailsContent').innerHTML = `
+          <p><strong>Location:</strong> ${call.location}</p>
+          <p><strong>Type:</strong> ${call.type}</p>
+          <p><strong>Description:</strong> ${call.description}</p>
+          <p><strong>Assigned Units:</strong> ${call.units || 'None'}</p>
+          <p><strong>Created:</strong> ${call.dateTime}</p>
+        `
+        
+        showModal('detailsModal')
+      }
+
+      function viewUnitDetails(row) {
+        if (!row) return
+        const callsign = row.getAttribute('data-callsign')
+        const unit = units.find(u => u.callsign === callsign)
+        if (!unit) return
+
+        let detailsHtml = `
+          <p><strong>Callsign:</strong> ${unit.callsign}</p>
+          <p><strong>Status:</strong> ${unit.status}</p>
+          <p><strong>Assignment:</strong> ${unit.assignment}</p>
+          <p><strong>Supervisor:</strong> ${unit.supervisor ? 'Yes' : 'No'}</p>
+        `
+        
+        // If this is a union, show member details
+        if (unit.isUnion && unit.unionMembers) {
+          detailsHtml += `
+            <hr style="margin: 15px 0;">
+            <p><strong>Union Members:</strong></p>
+            <div style="margin-left: 20px;">
+          `
+          unit.unionMembers.forEach(member => {
+            detailsHtml += `
+              <p style="margin: 5px 0;">
+                <strong>${member.callsign}</strong> 
+                ${member.supervisor ? '<span style="color: #ff6b00;">[SUPERVISOR]</span>' : ''}
+              </p>
+            `
+          })
+          detailsHtml += `</div>`
+        }
+
+        document.getElementById('detailsTitle').textContent = `${unit.callsign} Details`
+        document.getElementById('detailsContent').innerHTML = detailsHtml
+        
+        showModal('detailsModal')
+      }
+
+      function assignUnitsToCall(row) {
+        if (!row) return
+        const callId = parseInt(row.getAttribute('data-call-id'))
+        const call = calls.find(c => c.id === callId)
+        if (!call) return
+
+        document.getElementById('attachingToCall').textContent = `Call #${call.id} - ${call.location}`
+        
+        // Populate ALL units (not just available ones)
+        const container = document.getElementById('allUnitsForAttach')
+        container.innerHTML = ''
+        
+        units.forEach(unit => {
+          const div = document.createElement('div')
+          div.style.marginBottom = '5px'
+          div.innerHTML = `
+            <input type="checkbox" value="${unit.callsign}" id="attach_${unit.callsign}" 
+                   ${call.units && call.units.includes(unit.callsign) ? 'checked' : ''}>
+            <label for="attach_${unit.callsign}" style="margin-left: 5px;">
+              ${unit.callsign} (${unit.status}) - ${unit.assignment}
+            </label>
+          `
+          container.appendChild(div)
+        })
+        
+        attachUnitsModal.currentCallId = callId
+        showModal('attachUnitsModal')
+      }
+
+      function confirmAttachUnits() {
+        const callId = attachUnitsModal.currentCallId
+        const checkboxes = document.querySelectorAll('#allUnitsForAttach input[type="checkbox"]:checked')
+        const selectedCallsigns = Array.from(checkboxes).map(cb => cb.value)
+        
+        const call = calls.find(c => c.id == callId)
+        if (!call) return
+
+        // Update units - attach selected ones, detach unselected ones
+        units.forEach(unit => {
+          const shouldBeAttached = selectedCallsigns.includes(unit.callsign)
+          const currentlyAttached = call.units && call.units.includes(unit.callsign)
+          
+          if (shouldBeAttached && !currentlyAttached) {
+            // Detach from previous call if any
+            if (unit.assignment !== "Unassigned") {
+              const prevAssignmentMatch = unit.assignment.match(/Call #(\d+)/)
+              if (prevAssignmentMatch) {
+                const prevCallId = parseInt(prevAssignmentMatch[1])
+                const prevCall = calls.find(c => c.id === prevCallId)
+                if (prevCall && prevCall.units) {
+                  const unitsList = prevCall.units.split(', ').filter(u => u !== unit.callsign)
+                  prevCall.units = unitsList.join(', ')
                 }
               }
             }
-          } else {
-            alert("Unit not found in the array.")
+            
+            // Attach to new call
+            unit.assignment = `Call #${callId}`
+            unit.status = "Busy"
+          } else if (!shouldBeAttached && currentlyAttached) {
+            // Detach from current call
+            unit.assignment = "Unassigned"
+            unit.status = "Available"
           }
+        })
+        
+        // Update call's units list
+        call.units = selectedCallsigns.join(', ')
+        
+        refreshTables()
+        saveToStorage()
+        closeAllModals()
+      }
+
+      function confirmMultiAssignment() {
+        const callId = multiAssignModal.currentCallId
+        const checkboxes = document.querySelectorAll('#availableUnits input[type="checkbox"]:checked')
+        const selectedCallsigns = Array.from(checkboxes).map(cb => cb.value)
+        
+        if (selectedCallsigns.length === 0) {
+          alert('Please select at least one unit')
+          return
+        }
+        
+        // Update units
+        selectedCallsigns.forEach(callsign => {
+          const unit = units.find(u => u.callsign === callsign)
+          if (unit) {
+            unit.assignment = `Call #${callId}`
+            unit.status = "Busy"
+          }
+        })
+        
+        // Update call's units list
+        const call = calls.find(c => c.id == callId)
+        if (call) {
+          const currentUnits = call.units ? call.units.split(', ') : []
+          selectedCallsigns.forEach(callsign => {
+            if (!currentUnits.includes(callsign)) {
+              currentUnits.push(callsign)
+            }
+          })
+          call.units = currentUnits.join(', ')
+        }
+        
+        refreshTables()
+        saveToStorage()
+        closeAllModals()
+      }
+
+      // Multi-select actions
+      function deleteSelectedCalls() {
+        if (selectedCalls.size === 0) return
+        
+        if (confirm(`Delete ${selectedCalls.size} selected calls?`)) {
+          // Remove from array and table
+          selectedCalls.forEach(callId => {
+            const index = calls.findIndex(c => c.id === callId)
+            if (index !== -1) calls.splice(index, 1)
+            
+            const row = document.querySelector(`tr[data-call-id="${callId}"]`)
+            if (row) row.remove()
+            
+            // Update units
+            units.forEach(unit => {
+              if (unit.assignment === `Call #${callId}`) {
+                unit.assignment = "Unassigned"
+                unit.status = "Available"
+              }
+            })
+          })
+          
+          clearCallSelection()
+          refreshUnitTable()
+          saveToStorage()
+        }
+      }
+
+      function deleteSelectedUnits() {
+        if (selectedUnits.size === 0) return
+        
+        if (confirm(`Delete ${selectedUnits.size} selected units?`)) {
+          selectedUnits.forEach(callsign => {
+            const index = units.findIndex(u => u.callsign === callsign)
+            if (index !== -1) units.splice(index, 1)
+            
+            const row = document.querySelector(`tr[data-callsign="${callsign}"]`)
+            if (row) row.remove()
+            
+            // Update calls
+            calls.forEach(call => {
+              if (call.units) {
+                const unitList = call.units.split(', ').filter(u => u !== callsign)
+                call.units = unitList.join(', ')
+              }
+            })
+          })
+          
+          clearUnitSelection()
+          refreshCallTable()
+          saveToStorage()
+        }
+      }
+
+      function unionSelectedUnits() {
+        if (selectedUnits.size !== 2) {
+          alert("Please select exactly 2 units to create a union.")
+          return
+        }
+        
+        const callsigns = Array.from(selectedUnits)
+        const unionCallsign = `U${unionCount} - ${callsigns.join(" & ")}`
+        
+        // Remove old units
+        callsigns.forEach(callsign => {
+          const index = units.findIndex(u => u.callsign === callsign)
+          if (index !== -1) units.splice(index, 1)
+          
+          const row = document.querySelector(`tr[data-callsign="${callsign}"]`)
+          if (row) row.remove()
+        })
+        
+        // Create union unit
+        const unionUnit = {
+          callsign: unionCallsign,
+          supervisor: false,
+          status: "Available",
+          assignment: "Unassigned"
+        }
+        
+        units.push(unionUnit)
+        addUnitToTable(unionUnit)
+        
+        unionCount++
+        clearUnitSelection()
+        sortUnitTable()
+        saveToStorage()
+      }
+
+      // Utility functions
+      function refreshTables() {
+        refreshCallTable()
+        refreshUnitTable()
+      }
+
+      function refreshCallTable() {
+        document.getElementById('callTableBody').innerHTML = ''
+        calls.forEach(call => addCallToTable(call))
+      }
+
+      function refreshUnitTable() {
+        document.getElementById('unitTableBody').innerHTML = ''
+        units.forEach(unit => addUnitToTable(unit))
+        sortUnitTable()
+      }      // Initialize when page loads
+      document.addEventListener('DOMContentLoaded', function() {
+        loadStoredData();
+        loadNotepadContent();
+        updateClock();
+        setInterval(updateClock, 1000); // Update clock every second
+        handleResize(); // Initial layout check
+        
+        // Initialize TomSelect for type dropdown
+        new TomSelect('#type', {
+          create: false,
+          sortField: {
+            field: "text",
+            direction: "asc"
+          }
+        });
+      });
+
+      // Utility Functions
+      function sortUnitTable() {
+        const table = document.getElementById("unitTableBody");
+        const rows = Array.from(table.rows);
+
+        rows.sort((a, b) => {
+          const aCallsign = a.cells[1].innerText.trim(); // Updated for new column order
+          const bCallsign = b.cells[1].innerText.trim();
+
+          // Move Union callsigns to the bottom
+          const isUnionA = aCallsign.startsWith("U");
+          const isUnionB = bCallsign.startsWith("U");
+
+          if (isUnionA && !isUnionB) return 1;
+          if (!isUnionA && isUnionB) return -1;
+
+          // If both are unions or both are not unions, sort alphabetically
+          return aCallsign.localeCompare(bCallsign);
+        });
+
+        rows.forEach(row => table.appendChild(row));
+      }
+
+      function toggleNotepad() {
+        const pad = document.getElementById("notepad");
+        const grid = document.querySelector(".grid-container");
+
+        if (pad.style.display === "none") {
+          pad.style.display = "flex";
+          // Only adjust margin on desktop
+          if (window.innerWidth >= 900) {
+            grid.style.marginLeft = "260px";
+          }
+        } else {
+          pad.style.display = "none";
+          // Only adjust margin on desktop
+          if (window.innerWidth >= 900) {
+            grid.style.marginLeft = "0";
+          }
+        }
+      }
+
+      function toggleSignal100() {
+        const banner = document.getElementById("signal100Banner");
+        if (banner.style.display === "none" || banner.style.display === "") {
+          banner.style.display = "block";
+          document.body.style.border = "10px solid red";  // Add thick red border
+        } else {
+          banner.style.display = "none";
+          document.body.style.border = "none"; // Remove border
         }
       }
 
@@ -926,171 +2398,140 @@ function toggleBusy(row, button) {
           `${dateString} | ${timeString}`
       }
 
-      // Start the clock updating every second
-      setInterval(updateClock, 1000)
-      updateClock() // Update immediately on load
-
-      let darkMode = false
-
+      // Theme toggle
       function toggleTheme() {
-        darkMode = !darkMode
+        document.body.classList.toggle('dark-theme');
+      }
 
-        if (darkMode) {
-          document.body.style.backgroundColor = "#222"
-          document.body.style.color = "#f2f2f2"
-
-          // Optional: Make header background a little darker
-          document.querySelector("header").style.backgroundColor = "#333"
-
-          // Change table header color too if you want
-          let tableHeaders = document.querySelectorAll(".table th")
-          tableHeaders.forEach((th) => {
-            th.style.backgroundColor = "#333"
-            th.style.color = "#f2f2f2"
-          })
+      // Handle window resize for responsive layout
+      window.addEventListener('resize', handleResize);
+      
+      function handleResize() {
+        const pad = document.getElementById("notepad");
+        const grid = document.querySelector(".grid-container");
+        const screenWidth = window.innerWidth;
+        
+        // Adjust layout based on screen size
+        if (screenWidth < 900) {
+          // Mobile/tablet view - notepad becomes full width
+          grid.style.marginLeft = "0";
+          if (pad.style.display !== "none") {
+            pad.style.position = "relative";
+            pad.style.width = "100%";
+            pad.style.height = screenWidth < 600 ? "150px" : "200px";
+          }
         } else {
-          document.body.style.backgroundColor = "#ffffff"
-          document.body.style.color = "#000000"
-          document.querySelector("header").style.backgroundColor = "#444"
-
-          let tableHeaders = document.querySelectorAll(".table th")
-          tableHeaders.forEach((th) => {
-            th.style.backgroundColor = "#444"
-            th.style.color = "#ffffff"
-          })
+          // Desktop view - notepad is sidebar
+          if (pad.style.display !== "none") {
+            pad.style.position = "fixed";
+            pad.style.width = screenWidth < 1200 ? "210px" : "250px";
+            pad.style.height = "100vh";
+            grid.style.marginLeft = screenWidth < 1200 ? "220px" : "260px";
+          } else {
+            grid.style.marginLeft = "0";
+          }
         }
       }
-      
-      
-   function toggleSignal100() {
-  const banner = document.getElementById("signal100Banner");
-  if (banner.style.display === "none" || banner.style.display === "") {
-    banner.style.display = "block";
-    document.body.style.border = "10px solid red";  // Add thick red border
-  } else {
-    banner.style.display = "none";
-    document.body.style.border = "none"; // Remove border
-  }
-}
 
-// Activate live search on the call type dropdown
-document.addEventListener('DOMContentLoaded', function() {
-  new TomSelect('#type', {
-    create: false,
-    sortField: {
-      field: "text",
-      direction: "asc"
-    }
-  });
-});
-function sortUnitTable() {
-  const table = document.getElementById("unitTableBody");
-  const rows = Array.from(table.rows);
+      // Clock function
+      function updateClock() {
+        const now = new Date();
+        const timeString = now.toLocaleString();
+        document.getElementById('clock').textContent = timeString;
+      }
 
-  rows.sort((a, b) => {
-    const aCallsign = a.cells[0].innerText.trim();
-    const bCallsign = b.cells[0].innerText.trim();
+      // Theme toggle function
+      function toggleTheme() {
+        document.body.classList.toggle('dark-theme');
+      }
 
-    // Move Union callsigns to the bottom
-    const isUnionA = aCallsign.startsWith("U");
-    const isUnionB = bCallsign.startsWith("U");
+      // Signal 100 toggle
+      function toggleSignal100() {
+        const banner = document.getElementById('signal100Banner');
+        banner.style.display = banner.style.display === 'none' ? 'block' : 'none';
+      }
 
-    if (isUnionA && !isUnionB) return 1;
-    if (!isUnionA && isUnionB) return -1;
+      // Input sanitization function
+      function sanitizeInput(input) {
+        const div = document.createElement('div');
+        div.textContent = input;
+        return div.innerHTML;
+      }
 
-    // If both are unions or both are not unions, sort alphabetically
-    return aCallsign.localeCompare(bCallsign);
-  });
+      // Save notepad content to localStorage
+      document.getElementById('notepadText').addEventListener('input', function() {
+        localStorage.setItem('webcad_notepad', this.value);
+      });
 
-  rows.forEach(row => table.appendChild(row));
-}
+      // Load notepad content
+      function loadNotepadContent() {
+        const saved = localStorage.getItem('webcad_notepad');
+        if (saved) {
+          document.getElementById('notepadText').value = saved;
+        }
+      }
 
-function toggleNotepad() {
-  const pad = document.getElementById("notepad");
-  const grid = document.querySelector(".grid-container");
+      // Initialize when page loads
+      document.addEventListener('DOMContentLoaded', function() {
+        loadStoredData();
+        loadNotepadContent();
+        updateClock();
+        setInterval(updateClock, 1000);
+      });
 
-  if (pad.style.display === "none") {
-    pad.style.display = "flex";
-    grid.style.marginLeft = "260px";
-  } else {
-    pad.style.display = "none";
-    grid.style.marginLeft = "0";
-  }
-}
+      // Clock functionality
+      function updateClock() {
+        const now = new Date();
+        const timeString = now.toLocaleString();
+        document.getElementById('clock').textContent = timeString;
+      }
 
+      // Theme toggle
+      function toggleTheme() {
+        document.body.classList.toggle('dark-theme');
+        localStorage.setItem('webcad_darkTheme', document.body.classList.contains('dark-theme'));
+      }
 
-function closeNotepad() {
-  document.getElementById("notepad").style.display = "none";
-}
-let unionCount = 1;
-function unionUnits() {
-  const checkboxes = document.querySelectorAll('.unit-selector:checked');
-  if (checkboxes.length !== 2) {
-    alert("Please select exactly two units to form a Union.");
-    return;
-  }
+      // Signal 100 toggle
+      function toggleSignal100() {
+        const banner = document.getElementById('signal100Banner');
+        const isActive = banner.style.display !== 'none';
+        banner.style.display = isActive ? 'none' : 'block';
+        localStorage.setItem('webcad_signal100', !isActive);
+      }
 
+      // Notepad toggle
+      function toggleNotepad() {
+        const notepad = document.getElementById('notepad');
+        const isVisible = notepad.style.display !== 'none';
+        notepad.style.display = isVisible ? 'none' : 'block';
+        localStorage.setItem('webcad_notepadVisible', !isVisible);
+      }
 
-  const unitRows = Array.from(checkboxes).map(cb => cb.closest("tr"));
-  const callsigns = unitRows.map(row => row.cells[0].textContent.trim());
+      // Load saved states
+      if (localStorage.getItem('webcad_darkTheme') === 'true') {
+        document.body.classList.add('dark-theme');
+      }
+      if (localStorage.getItem('webcad_signal100') === 'true') {
+        document.getElementById('signal100Banner').style.display = 'block';
+      }
+      if (localStorage.getItem('webcad_notepadVisible') === 'false') {
+        document.getElementById('notepad').style.display = 'none';
+      }
 
-  const unionCallsign = `U${unionCount} - ${callsigns.join(" & ")}`;
-  unionCount++; // Increment for the next union
+      // Input sanitization
+      function sanitizeInput(input) {
+        const div = document.createElement('div');
+        div.textContent = input;
+        return div.innerHTML;
+      }
 
-  // Remove the old units
-  unitRows.forEach(row => {
-    document.getElementById("unitTableBody").removeChild(row);
-    const index = units.findIndex(u => u.callsign === row.cells[0].textContent.trim());
-    if (index !== -1) units.splice(index, 1);
-  });
-
-  // Add the new union unit
-  units.push({
-    callsign: unionCallsign,
-    supervisor: false,
-    status: "Available"
-  });
-
-  // Re-add as one combined unit
-  let table = document.getElementById("unitTableBody");
-  let row = table.insertRow();
-  row.insertCell(0).innerHTML = unionCallsign;
-  row.insertCell(1).innerHTML = `<span class="available">Available</span>`;
-  row.insertCell(2).innerHTML = "Unassigned";
-  row.insertCell(3).innerHTML = "No";
-
-  let assignCell = row.insertCell(4);
-  let assignButton = document.createElement("button");
-  assignButton.innerHTML = "Assign";
-  assignButton.onclick = function () {
-    assignUnit(row);
-  };
-
-  let busyButton = document.createElement("button");
-  busyButton.innerHTML = "Busy";
-  busyButton.onclick = function () {
-    toggleBusy(row, busyButton);
-  };
-
-  assignCell.appendChild(assignButton);
-  assignCell.appendChild(busyButton);
-
-  let deleteCell = row.insertCell(5);
-  let deleteButton = document.createElement("button");
-  deleteButton.innerHTML = "Delete";
-  deleteButton.onclick = function () {
-    deleteUnit(row);
-  };
-  deleteCell.appendChild(deleteButton);
-
-  let selectCell = row.insertCell(6);
-  let checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.classList.add("unit-selector");
-  selectCell.appendChild(checkbox);
-
-  sortUnitTable();
-}
+      // Save notepad content to localStorage
+      document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('notepadText').addEventListener('input', function() {
+          localStorage.setItem('webcad_notepad', this.value);
+        });
+      });
 
 
     </script>
