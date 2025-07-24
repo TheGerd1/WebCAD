@@ -864,7 +864,7 @@
   
 .grid-container {
   display: grid;
-  margin-left: 260px; /* Leaves room for notepad */
+  margin-left: 0;
   grid-template-columns: (4, [col] 150px);
   grid-template-rows: (2, [row] auto);
   gap: 10px;
@@ -879,16 +879,19 @@
   
 <div id="signal100Banner" style="
   display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   background-color: red;
   color: white;
   font-weight: bold;
   text-align: center;
   padding: 15px;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  z-index: 2000;
   font-size: 24px;
+  border: 3px solid darkred;
+  box-sizing: border-box;
 ">
   SIGNAL 100 IN PROGRESS
 </div>
@@ -909,28 +912,55 @@
 
 <div id="notepad" style="
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 250px;
-  height: 100vh;
+  top: 20px;
+  left: 20px;
+  width: 300px;
+  height: 400px;
   background-color: #444;
   color: white;
-  padding: 10px;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.5);
-  z-index: 1000;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  z-index: 1500;
   display: flex;
   flex-direction: column;
+  resize: both;
+  overflow: auto;
+  min-width: 200px;
+  min-height: 200px;
 ">
-  <h3 style="margin-top: 0;">Notepad</h3>
+  <div id="notepadHeader" style="
+    background-color: #333;
+    padding: 10px;
+    border-radius: 8px 8px 0 0;
+    cursor: move;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  ">
+    <h3 style="margin: 0; font-size: 14px;">Notepad</h3>
+    <button onclick="toggleNotepad()" style="
+      background: #666;
+      border: none;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+    ">×</button>
+  </div>
   <textarea id="notepadText" style="
     flex: 1;
-    width: 100%;
+    width: calc(100% - 20px);
     resize: none;
     background-color: #fff;
     color: #000;
-    padding: 5px;
-    border-radius: 4px;
+    padding: 10px;
+    border: none;
+    border-radius: 0 0 8px 8px;
+    margin: 0;
     box-sizing: border-box;
+    outline: none;
   "></textarea>
 </div>
 
@@ -2319,8 +2349,8 @@ function addUnitToTable(unit) {
         loadStoredData();
         loadNotepadContent();
         updateClock();
-        setInterval(updateClock, 1000); // Update clock every second
-        handleResize(); // Initial layout check
+        setInterval(updateClock, 1000);
+        makeNotepadDraggable();
         
         // Initialize TomSelect for type dropdown
         new TomSelect('#type', {
@@ -2504,8 +2534,94 @@ function addUnitToTable(unit) {
       function toggleNotepad() {
         const notepad = document.getElementById('notepad');
         const isVisible = notepad.style.display !== 'none';
-        notepad.style.display = isVisible ? 'none' : 'block';
+        notepad.style.display = isVisible ? 'none' : 'flex';
         localStorage.setItem('webcad_notepadVisible', !isVisible);
+      }
+
+      // Make notepad draggable
+      function makeNotepadDraggable() {
+        const notepad = document.getElementById('notepad');
+        const header = document.getElementById('notepadHeader');
+        let isDragging = false;
+        let currentX;
+        let currentY;
+        let initialX;
+        let initialY;
+        let xOffset = 0;
+        let yOffset = 0;
+
+        header.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', dragMove);
+        document.addEventListener('mouseup', dragEnd);
+
+        function dragStart(e) {
+          initialX = e.clientX - xOffset;
+          initialY = e.clientY - yOffset;
+
+          if (e.target === header || header.contains(e.target)) {
+            isDragging = true;
+          }
+        }
+
+        function dragMove(e) {
+          if (isDragging) {
+            e.preventDefault();
+            currentX = e.clientX - initialX;
+            currentY = e.clientY - initialY;
+
+            // Keep notepad within viewport bounds
+            const rect = notepad.getBoundingClientRect();
+            const maxX = window.innerWidth - rect.width;
+            const maxY = window.innerHeight - rect.height;
+            
+            currentX = Math.max(0, Math.min(currentX, maxX));
+            currentY = Math.max(0, Math.min(currentY, maxY));
+
+            xOffset = currentX;
+            yOffset = currentY;
+
+            notepad.style.left = currentX + 'px';
+            notepad.style.top = currentY + 'px';
+          }
+        }
+
+        function dragEnd(e) {
+          initialX = currentX;
+          initialY = currentY;
+          isDragging = false;
+          
+          // Save position
+          localStorage.setItem('webcad_notepadX', currentX);
+          localStorage.setItem('webcad_notepadY', currentY);
+        }
+
+        // Load saved position and size
+        const savedX = localStorage.getItem('webcad_notepadX');
+        const savedY = localStorage.getItem('webcad_notepadY');
+        const savedWidth = localStorage.getItem('webcad_notepadWidth');
+        const savedHeight = localStorage.getItem('webcad_notepadHeight');
+        
+        if (savedX && savedY) {
+          xOffset = parseInt(savedX);
+          yOffset = parseInt(savedY);
+          notepad.style.left = savedX + 'px';
+          notepad.style.top = savedY + 'px';
+        }
+        
+        if (savedWidth && savedHeight) {
+          notepad.style.width = savedWidth + 'px';
+          notepad.style.height = savedHeight + 'px';
+        }
+
+        // Save size when resized
+        const resizeObserver = new ResizeObserver(entries => {
+          for (let entry of entries) {
+            const { width, height } = entry.contentRect;
+            localStorage.setItem('webcad_notepadWidth', width);
+            localStorage.setItem('webcad_notepadHeight', height);
+          }
+        });
+        resizeObserver.observe(notepad);
       }
 
       // Load saved states
