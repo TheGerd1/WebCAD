@@ -861,6 +861,115 @@
         background-color: #44ff44 !important;
         color: black !important;
       }
+
+      /* Dark theme for context menus and modals */
+      body.dark-theme .context-menu {
+        background: #333 !important;
+        border-color: #666 !important;
+        color: #fff !important;
+      }
+
+      body.dark-theme .context-menu-item {
+        color: #fff !important;
+        border-bottom-color: #555 !important;
+      }
+
+      body.dark-theme .context-menu-item:hover {
+        background-color: #444 !important;
+        color: #fff !important;
+      }
+
+      body.dark-theme .context-menu-item.danger:hover {
+        background-color: #5d1f1f !important;
+        color: #ffcccc !important;
+      }
+
+      /* Dark theme for modals */
+      body.dark-theme .action-modal {
+        background: #333 !important;
+        color: #fff !important;
+      }
+
+      body.dark-theme .action-modal h3 {
+        color: #fff !important;
+        border-bottom-color: #555 !important;
+      }
+
+      body.dark-theme .action-modal input,
+      body.dark-theme .action-modal select,
+      body.dark-theme .action-modal textarea {
+        background-color: #444 !important;
+        color: #fff !important;
+        border-color: #666 !important;
+      }
+
+      body.dark-theme .action-modal input:focus,
+      body.dark-theme .action-modal select:focus,
+      body.dark-theme .action-modal textarea:focus {
+        border-color: #888 !important;
+        outline: none !important;
+      }
+
+      /* Dark theme for forms */
+      body.dark-theme .calldiv,
+      body.dark-theme .unitdiv {
+        background-color: #333 !important;
+        color: #fff !important;
+      }
+
+      body.dark-theme .calldiv input,
+      body.dark-theme .calldiv select,
+      body.dark-theme .calldiv textarea,
+      body.dark-theme .unitdiv input,
+      body.dark-theme .unitdiv select,
+      body.dark-theme .unitdiv textarea {
+        background-color: #444 !important;
+        color: #fff !important;
+        border-color: #666 !important;
+      }
+
+      body.dark-theme .calldiv label,
+      body.dark-theme .unitdiv label {
+        color: #fff !important;
+      }
+
+      /* Dark theme for notepad */
+      body.dark-theme #notepad {
+        background-color: #333 !important;
+        color: #fff !important;
+      }
+
+      body.dark-theme #notepadHeader {
+        background-color: #222 !important;
+      }
+
+      body.dark-theme #notepadText {
+        background-color: #444 !important;
+        color: #fff !important;
+      }
+
+      /* Dark theme for union selection lists */
+      body.dark-theme #unionUnitsList {
+        background-color: #444 !important;
+        color: #fff !important;
+        border-color: #666 !important;
+      }
+
+      body.dark-theme #unionUnitsList label {
+        color: #fff !important;
+      }
+
+      body.dark-theme #availableUnits,
+      body.dark-theme #allUnitsForAttach {
+        background-color: #444 !important;
+        color: #fff !important;
+        border-color: #666 !important;
+      }
+
+      body.dark-theme #availableUnits label,
+      body.dark-theme #allUnitsForAttach label {
+        color: #fff !important;
+      }
   
 .grid-container {
   display: grid;
@@ -1379,6 +1488,10 @@
 
       // Load data on page load
       function loadStoredData() {
+        // Clear existing tables first to prevent duplicates
+        document.getElementById('callTableBody').innerHTML = ''
+        document.getElementById('unitTableBody').innerHTML = ''
+        
         // Reload calls
         calls.forEach(call => {
           addCallToTable(call)
@@ -2344,8 +2457,22 @@ function addUnitToTable(unit) {
         document.getElementById('unitTableBody').innerHTML = ''
         units.forEach(unit => addUnitToTable(unit))
         sortUnitTable()
-      }      // Initialize when page loads
+      }
+
+      // Initialize when page loads
       document.addEventListener('DOMContentLoaded', function() {
+        // Load saved theme and states first
+        if (localStorage.getItem('webcad_darkTheme') === 'true') {
+          document.body.classList.add('dark-theme');
+        }
+        if (localStorage.getItem('webcad_signal100') === 'true') {
+          document.getElementById('signal100Banner').style.display = 'block';
+        }
+        if (localStorage.getItem('webcad_notepadVisible') === 'false') {
+          document.getElementById('notepad').style.display = 'none';
+        }
+        
+        // Load data and initialize functionality
         loadStoredData();
         loadNotepadContent();
         updateClock();
@@ -2360,6 +2487,11 @@ function addUnitToTable(unit) {
             direction: "asc"
           }
         });
+        
+        // Set up notepad input event listener
+        document.getElementById('notepadText').addEventListener('input', function() {
+          localStorage.setItem('webcad_notepad', this.value);
+        });
       });
 
       // Utility Functions
@@ -2368,8 +2500,8 @@ function addUnitToTable(unit) {
         const rows = Array.from(table.rows);
 
         rows.sort((a, b) => {
-          const aCallsign = a.cells[1].innerText.trim(); // Updated for new column order
-          const bCallsign = b.cells[1].innerText.trim();
+          const aCallsign = a.cells[0].innerText.trim(); // Fixed: Callsign is column 0
+          const bCallsign = b.cells[0].innerText.trim();
 
           // Move Union callsigns to the bottom
           const isUnionA = aCallsign.startsWith("U");
@@ -2488,11 +2620,6 @@ function addUnitToTable(unit) {
         return div.innerHTML;
       }
 
-      // Save notepad content to localStorage
-      document.getElementById('notepadText').addEventListener('input', function() {
-        localStorage.setItem('webcad_notepad', this.value);
-      });
-
       // Load notepad content
       function loadNotepadContent() {
         const saved = localStorage.getItem('webcad_notepad');
@@ -2500,14 +2627,6 @@ function addUnitToTable(unit) {
           document.getElementById('notepadText').value = saved;
         }
       }
-
-      // Initialize when page loads
-      document.addEventListener('DOMContentLoaded', function() {
-        loadStoredData();
-        loadNotepadContent();
-        updateClock();
-        setInterval(updateClock, 1000);
-      });
 
       // Clock functionality
       function updateClock() {
@@ -2623,32 +2742,6 @@ function addUnitToTable(unit) {
         });
         resizeObserver.observe(notepad);
       }
-
-      // Load saved states
-      if (localStorage.getItem('webcad_darkTheme') === 'true') {
-        document.body.classList.add('dark-theme');
-      }
-      if (localStorage.getItem('webcad_signal100') === 'true') {
-        document.getElementById('signal100Banner').style.display = 'block';
-      }
-      if (localStorage.getItem('webcad_notepadVisible') === 'false') {
-        document.getElementById('notepad').style.display = 'none';
-      }
-
-      // Input sanitization
-      function sanitizeInput(input) {
-        const div = document.createElement('div');
-        div.textContent = input;
-        return div.innerHTML;
-      }
-
-      // Save notepad content to localStorage
-      document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('notepadText').addEventListener('input', function() {
-          localStorage.setItem('webcad_notepad', this.value);
-        });
-      });
-
 
     </script>
   </body>
