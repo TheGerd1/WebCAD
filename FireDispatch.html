@@ -1,0 +1,964 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebCAD — Fire Dispatch</title>
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+  <style>
+    /* ===== Base Inputs ===== */
+    input[type="text"], input[type="number"], select, textarea {
+      width: 100%; padding: 12px 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+    }
+    input[type="checkbox"]{ margin:0; width:16px; height:16px; cursor:pointer; }
+
+    /* ===== Buttons ===== */
+    button { background:#444; border:1px solid #666; color:#fff; padding:8px 12px; border-radius:6px; cursor:pointer; transition:.2s; }
+    button:hover{ background:#666; transform: translateY(-1px); }
+    button:active{ transform:none; }
+    .btn-row{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    .btn-green{ background:#2e7d32; }
+    .btn-blue{ background:#1565c0; }
+    .btn-amber{ background:#ef6c00; }
+    .btn-red{ background:#c62828; }
+    .btn-outline{ background:transparent; color:#333; border:1px solid #ccc; }
+
+    /* ===== Layout ===== */
+    body{ margin:0; font:14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial; background:#fff; color:#000; transition: background .3s, color .3s; }
+    body.dark-theme{ background:#1a1a1a; color:#fff; }
+
+    .grid-container{ display:grid; grid-template-columns:repeat(auto-fit, minmax(360px, 1fr)); gap:10px; padding:10px; max-width:100%; }
+    .item{ background:#444; color:#fff; border-radius:8px; padding:16px; }
+    .item .item{ background:#ccc; color:#333; }
+
+    header{ display:flex; justify-content:space-between; align-items:center; padding:10px; background:#444; position:sticky; top:0; z-index:100; border-radius:8px; }
+    header h1{ margin:0; font-size:22px; }
+    #clock{ color:#ddd; }
+
+    /* ===== Tables ===== */
+    .table-container{ overflow:auto; border:1px solid #ddd; border-radius:6px; background:#fff; }
+    body.dark-theme .table-container{ background:#222; border-color:#555; }
+
+    table.table{ border-collapse:collapse; width:100%; table-layout:fixed; font-size:13px; }
+    table.table th, table.table td{ border:0.5px solid #444; padding:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; height:34px; }
+    table.table th{ background:#444; color:#fff; font-weight:700; }
+    .table tr.selected{ background:#e3f2fd !important; }
+    body.dark-theme .table tr.selected{ background:#263238 !important; }
+
+    /* Column widths */
+    /* Calls table */
+    #callTable th:nth-child(1), #callTable td:nth-child(1){ width:56px; }    /* ID */
+    #callTable th:nth-child(2), #callTable td:nth-child(2){ width:180px; }   /* Location */
+    #callTable th:nth-child(3), #callTable td:nth-child(3){ width:140px; }   /* Type */
+    #callTable th:nth-child(4), #callTable td:nth-child(4){ width:240px; }   /* Description */
+    #callTable th:nth-child(5), #callTable td:nth-child(5){ width:180px; }   /* Units */
+    #callTable th:nth-child(6), #callTable td:nth-child(6){ width:160px; }   /* Date/Time */
+
+    /* Units table */
+    #unitTable th:nth-child(1), #unitTable td:nth-child(1){ width:120px; }   /* Callsign */
+    #unitTable th:nth-child(2), #unitTable td:nth-child(2){ width:140px; }   /* Username */
+    #unitTable th:nth-child(3), #unitTable td:nth-child(3){ width:100px; }   /* Status */
+    #unitTable th:nth-child(4), #unitTable td:nth-child(4){ width:180px; }   /* Assignment */
+    #unitTable th:nth-child(5), #unitTable td:nth-child(5){ width:220px; }   /* Riders */
+    #unitTable th:nth-child(6), #unitTable td:nth-child(6){ width:90px; }    /* Supervisor */
+    #unitTable th:nth-child(7), #unitTable td:nth-child(7){ width:160px; }   /* Date/Time */
+
+    /* Status badges */
+    .status-badge{ display:inline-block; padding:2px 6px; border-radius:10px; font-size:10px; font-weight:700; text-transform:uppercase; }
+    .status-available{ background:#4caf50; color:#fff; }
+    .status-busy{ background:#f44336; color:#fff; }
+    .status-assigned{ background:#2196f3; color:#fff; }
+
+    /* Signal 100 */
+    #signal100Banner{ display:none; position:fixed; top:0; left:0; width:100%; background:#d32f2f; color:#fff; font-weight:700; text-align:center; padding:14px; z-index:2000; font-size:20px; border-bottom:3px solid #7f0000; }
+
+    /* Notepad (draggable) */
+    #notepad{ position:fixed; top:20px; left:20px; width:280px; height:360px; background:#444; color:#fff; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,.3); z-index:1500; display:flex; flex-direction:column; resize:both; overflow:auto; min-width:200px; min-height:200px; }
+    #notepadHeader{ background:#333; padding:10px; border-radius:8px 8px 0 0; cursor:move; user-select:none; display:flex; justify-content:space-between; align-items:center; }
+    #notepadText{ flex:1; width:calc(100% - 20px); resize:none; background:#fff; color:#000; padding:10px; border:none; border-radius:0 0 8px 8px; margin:0; box-sizing:border-box; outline:none; }
+
+    /* Context Menu */
+    .context-menu{ position:fixed; background:#fff; border:1px solid #ccc; border-radius:6px; padding:0; margin:0; box-shadow:0 4px 12px rgba(0,0,0,.3); z-index:10000; min-width:180px; display:none; }
+    .context-menu-item{ padding:10px 14px; cursor:pointer; border-bottom:1px solid #eee; font-size:14px; }
+    .context-menu-item:last-child{ border-bottom:none; }
+    .context-menu-item:hover{ background:#f5f5f5; }
+    .context-menu-item.danger:hover{ background:#ffebee; color:#c62828; }
+    body.dark-theme .context-menu{ background:#333; color:#fff; border-color:#666; }
+    body.dark-theme .context-menu-item{ border-bottom-color:#555; }
+    body.dark-theme .context-menu-item:hover{ background:#444; }
+    body.dark-theme .context-menu-item.danger:hover{ background:#5d1f1f; color:#ffcccc; }
+
+    /* Modals */
+    .action-modal{ display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#fff; color:#000; padding:24px; border-radius:10px; box-shadow:0 8px 25px rgba(0,0,0,.3); z-index:10001; min-width:420px; max-width:90vw; }
+    .action-modal h3{ margin:0 0 12px; border-bottom:2px solid #eee; padding-bottom:8px; }
+    .modal-overlay{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.5); z-index:10000; }
+    body.dark-theme .action-modal{ background:#333; color:#fff; }
+    body.dark-theme .action-modal h3{ border-bottom-color:#555; }
+
+    .chip{ display:inline-block; padding:2px 6px; border-radius:999px; font-size:11px; background:#eceff1; color:#000; margin-right:4px; }
+    body.dark-theme .chip{ background:#607d8b; color:#fff; }
+
+    /* Mobile tweaks */
+    @media (max-width: 599px){
+      header h1{ font-size:18px; }
+      .action-modal{ min-width: 90vw; }
+      #unitTable, #callTable { font-size:12px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== Signal 100 ===== -->
+  <div id="signal100Banner">MAYDAY</div>
+
+  <!-- ===== Notepad ===== -->
+  <div id="notepad">
+    <div id="notepadHeader">
+      <h3 style="margin:0; font-size:14px;">Notepad</h3>
+      <button onclick="toggleNotepad()" class="btn-outline" style="padding:2px 6px; font-size:12px;">×</button>
+    </div>
+    <textarea id="notepadText"></textarea>
+  </div>
+
+  <div class="grid-container">
+    <div class="item a">
+      <header>
+        <div><h1>Computer-Aided Dispatch — Fire</h1></div>
+        <div id="clock">Loading…</div>
+      </header>
+
+      <!-- Global actions -->
+      <div class="btn-row" style="margin:10px 0 0; justify-content:center;">
+        <button type="button" onclick="location.href='index.html'">Home</button>
+        <button onclick="openForm()">New Call</button>
+        <button onclick="openUnitForm()">New Unit</button>
+
+        <button onclick="toggleTheme()">Toggle Theme</button>
+        <button onclick="toggleSignal100()">MAYDAY</button>
+        <button onclick="toggleNotepad()">Toggle Notepad</button>
+      </div>
+
+      <!-- ===== Forms (New Call / Unit / Union) ===== -->
+      <div class="action-modal" id="newCallModal">
+        <h3>New Incident</h3>
+        <label for="location">Location</label>
+        <input id="location" type="text" />
+        <label for="type">Type</label>
+        <select id="type"></select>
+        <label for="description">Description</label>
+        <input id="description" type="text" />
+        <div class="btn-row" style="margin-top:12px;">
+          <button class="btn-blue" onclick="addCall()">Create</button>
+          <button onclick="closeForm()">Cancel</button>
+        </div>
+      </div>
+
+      <div class="action-modal" id="newUnitModal">
+        <h3>New Unit</h3>
+        <label for="callsign">Callsign</label>
+        <input id="callsign" type="text" placeholder="E1, T3, BC1…" />
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div>
+            <label for="username">Username</label>
+            <input id="username" type="text" placeholder="jdoe" />
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; margin-top:22px;">
+            <input id="supervisor" type="checkbox" /> <label for="supervisor">Supervisor</label>
+          </div>
+        </div>
+        <small>Tip: Add ridealongs later via the unit context menu → “Manage Riders”.</small>
+        <div class="btn-row" style="margin-top:12px;">
+          <button class="btn-blue" onclick="addUnit()">Create</button>
+          <button onclick="closeUnitForm()">Cancel</button>
+        </div>
+      </div>
+
+      <div class="action-modal" id="newUnionModal">
+        <h3>New Union</h3>
+        <label for="unionNumber">Union Number</label>
+        <input id="unionNumber" type="number" min="1" max="999" />
+        <label>Select Units for Union (2–8)</label>
+        <div id="unionUnitsList" style="max-height:300px; overflow:auto; border:1px solid #ccc; padding:8px; background:#fff; color:#000;"></div>
+        <div style="margin-top:6px;"> <span id="selectedUnionCount">Selected: 0/8</span> </div>
+        <div class="btn-row" style="margin-top:12px;">
+          <button class="btn-green" onclick="createUnion()">Create Union</button>
+          <button onclick="closeUnionForm()">Cancel</button>
+        </div>
+      </div>
+
+      <!-- ===== Tables Row (Units LEFT, Calls RIGHT) ===== -->
+      <div class="item b" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <!-- UNITS (LEFT) -->
+        <div class="item c">
+          <section id="display-unit-info">
+            <div class="btn-row" style="margin-bottom:8px;">
+              <button class="btn-blue" onclick="openBulkAssignModal()">Assign Selected → Call</button>
+              <button class="btn-amber" onclick="detachSelectedUnits()">Detach Selected</button>
+              <button class="btn-outline" onclick="clearUnitSelection()">Clear Selection</button>
+              <span id="unitSelectionCount" style="margin-left:auto; font-weight:600;">0 selected</span>
+            </div>
+            <div class="table-container">
+              <table id="unitTable" class="table">
+                <thead>
+                  <tr>
+                    <th>Callsign</th>
+                    <th>Username</th>
+                    <th>Status</th>
+                    <th>Assignment</th>
+                    <th>Riders</th>
+                    <th>Supervisor</th>
+                    <th>Date/Time</th>
+                  </tr>
+                </thead>
+                <tbody id="unitTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <!-- CALLS (RIGHT) -->
+        <div class="item d">
+          <section id="display-call-info">
+            <div class="btn-row" style="margin-bottom:8px;">
+              <button class="btn-red" onclick="deleteSelectedCalls()">Delete Selected Calls</button>
+              <button class="btn-outline" onclick="clearCallSelection()">Clear Selection</button>
+              <span id="callSelectionCount" style="margin-left:auto; font-weight:600;">0 selected</span>
+            </div>
+            <div class="table-container">
+              <table id="callTable" class="table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Location</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Units</th>
+                    <th>Date/Time</th>
+                  </tr>
+                </thead>
+                <tbody id="callTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Context Menus ===== -->
+  <div id="callContextMenu" class="context-menu">
+    <div class="context-menu-item" onclick="editCall(currentContextRow)">✏️ Edit Call</div>
+    <div class="context-menu-item" onclick="viewCallDetails(currentContextRow)">👁️ View Details</div>
+    <div class="context-menu-item" onclick="assignUnitsToCall(currentContextRow)">👥 Attach/Detach Units</div>
+    <div class="context-menu-item" onclick="detachAllUnitsFromCall(currentContextRow)">🔗 Detach All Units</div>
+    <div class="context-menu-item danger" onclick="deleteCall(currentContextRow)">🗑️ Delete Call</div>
+  </div>
+
+  <div id="unitContextMenu" class="context-menu">
+    <div class="context-menu-item" onclick="editUnit(currentContextRow)">✏️ Edit Unit</div>
+    <div class="context-menu-item" onclick="assignUnitToCall(currentContextRow)">📋 Assign to Call</div>
+    <div class="context-menu-item" onclick="detachUnitFromCall(currentContextRow)">🔗 Detach from Call</div>
+    <div class="context-menu-item" onclick="manageRiders(currentContextRow)">🧑‍🤝‍🧑 Manage Riders</div>
+    <div class="context-menu-item" onclick="toggleUnitStatus(currentContextRow)">⚡ Toggle Status</div>
+    <div class="context-menu-item" id="dissolveUnionOption" style="display:none;" onclick="dissolveUnion(currentContextRow)">🔓 Dissolve Union</div>
+    <div class="context-menu-item danger" onclick="deleteUnit(currentContextRow)">🗑️ Delete Unit</div>
+  </div>
+
+  <!-- ===== Overlays / Modals ===== -->
+  <div id="modalOverlay" class="modal-overlay" onclick="closeAllModals()"></div>
+
+  <!-- Assign single unit to call -->
+  <div id="assignmentModal" class="action-modal">
+    <h3>Assign Unit to Call</h3>
+    <p><strong>Unit:</strong> <span id="assigningUnit"></span></p>
+    <label for="callSelect">Select Call</label>
+    <select id="callSelect"></select>
+    <div class="btn-row" style="margin-top:12px;">
+      <button class="btn-green" onclick="confirmAssignment()">Assign</button>
+      <button onclick="closeAllModals()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Multi-assign selected units to a call -->
+  <div id="bulkAssignModal" class="action-modal">
+    <h3>Assign Selected Units → Call</h3>
+    <p id="bulkAssignCount" style="margin-top:0;">0 units selected.</p>
+    <label for="bulkCallSelect">Select Call</label>
+    <select id="bulkCallSelect"></select>
+    <div class="btn-row" style="margin-top:12px;">
+      <button class="btn-green" onclick="confirmBulkAssignment()">Assign</button>
+      <button onclick="closeAllModals()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Edit Call -->
+  <div id="editCallModal" class="action-modal">
+    <h3>Edit Call</h3>
+    <label for="editLocation">Location</label>
+    <input id="editLocation" type="text">
+    <label for="editType">Type</label>
+    <select id="editType"></select>
+    <label for="editDescription">Description</label>
+    <input id="editDescription" type="text">
+    <div class="btn-row" style="margin-top:12px;">
+      <button class="btn-blue" onclick="saveCallEdit()">Save</button>
+      <button onclick="closeAllModals()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Edit Unit (now includes Username) -->
+  <div id="editUnitModal" class="action-modal">
+    <h3>Edit Unit</h3>
+    <label for="editCallsign">Callsign</label>
+    <input id="editCallsign" type="text">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div>
+        <label for="editUsername">Username</label>
+        <input id="editUsername" type="text">
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:22px;">
+        <input id="editSupervisor" type="checkbox"> <label for="editSupervisor">Supervisor</label>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:12px;">
+      <button class="btn-blue" onclick="saveUnitEdit()">Save</button>
+      <button onclick="closeAllModals()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Attach Units to Call (full list) -->
+  <div id="attachUnitsModal" class="action-modal">
+    <h3>Attach / Detach Units</h3>
+    <p><strong>Call:</strong> <span id="attachingToCall"></span></p>
+    <div id="allUnitsForAttach" style="max-height:260px; overflow:auto; border:1px solid #ccc; padding:8px; background:#fff; color:#000;"></div>
+    <div class="btn-row" style="margin-top:12px;">
+      <button class="btn-green" onclick="confirmAttachUnits()">Apply</button>
+      <button onclick="closeAllModals()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Details Modal (call or unit) -->
+  <div id="detailsModal" class="action-modal">
+    <h3 id="detailsTitle">Details</h3>
+    <div id="detailsContent"></div>
+    <div class="btn-row" style="margin-top:12px;">
+      <button onclick="closeAllModals()">Close</button>
+    </div>
+  </div>
+
+  <!-- Manage Riders (Ridealong / Officer Ridealong) -->
+  <div id="ridersModal" class="action-modal">
+    <h3>Manage Riders</h3>
+    <p><strong>Unit:</strong> <span id="ridersUnit"></span></p>
+    <div class="btn-row" style="margin:8px 0;">
+      <input id="riderName" type="text" placeholder="username" style="flex:1;">
+      <select id="riderType">
+        <option value="Ridealong">Ridealong</option>
+        <option value="Officer Ridealong">Officer Ridealong</option>
+      </select>
+      <button class="btn-blue" onclick="addRider()">Add</button>
+    </div>
+    <div id="ridersList" style="max-height:260px; overflow:auto; border:1px solid #ccc; padding:8px; background:#fff; color:#000;"></div>
+    <div class="btn-row" style="margin-top:12px;">
+      <button onclick="closeAllModals()">Done</button>
+    </div>
+  </div>
+
+  <script>
+    /* ========================
+       State & Storage
+    =========================*/
+    let calls = JSON.parse(localStorage.getItem('webcad_calls')) || []
+    let units = JSON.parse(localStorage.getItem('webcad_units')) || []
+    let callCounter = parseInt(localStorage.getItem('webcad_callCounter')) || 0
+    let currentContextRow = null
+
+    // Selection sets
+    const selectedUnits = new Set()
+    const selectedCalls = new Set()
+
+    function saveToStorage(){
+      localStorage.setItem('webcad_calls', JSON.stringify(calls))
+      localStorage.setItem('webcad_units', JSON.stringify(units))
+      localStorage.setItem('webcad_callCounter', callCounter.toString())
+    }
+
+    /* ========================
+       Helpers
+    =========================*/
+    function fmtStatusBadge(status){
+      const cls = 'status-' + status.toLowerCase().replace(/\s+/g,'-')
+      return `<span class="status-badge ${cls}">${status}</span>`
+    }
+    function sanitizeInput(input){ const div = document.createElement('div'); div.textContent = input; return div.innerHTML; }
+
+    function updateSelectionCounts(){
+      document.getElementById('unitSelectionCount').textContent = `${selectedUnits.size} selected`
+      document.getElementById('callSelectionCount').textContent = `${selectedCalls.size} selected`
+    }
+
+    function addRowSelectionBehavior(row, type){
+      // type: 'unit' or 'call'
+      row.addEventListener('click', (e)=>{
+        // Avoid selecting when clicking a button, input, or link
+        if(['BUTTON','INPUT','SELECT','LABEL'].includes(e.target.tagName)) return
+        const set = (type==='unit') ? selectedUnits : selectedCalls
+        const key = (type==='unit') ? row.getAttribute('data-callsign') : parseInt(row.getAttribute('data-call-id'))
+
+        // Toggle selection with ctrl/cmd, range with shift could be added later
+        if(set.has(key)){
+          set.delete(key); row.classList.remove('selected')
+        }else{
+          set.add(key); row.classList.add('selected')
+        }
+        updateSelectionCounts()
+      })
+    }
+
+    /* ========================
+       Context Menus
+    =========================*/
+    document.addEventListener('click', function(){
+      document.getElementById('callContextMenu').style.display = 'none'
+      document.getElementById('unitContextMenu').style.display = 'none'
+      document.querySelectorAll('.context-active').forEach(r=>r.classList.remove('context-active'))
+    })
+
+    document.addEventListener('contextmenu', function(e){
+      const row = e.target.closest('tr')
+      if(!row || row.parentElement.tagName === 'THEAD') return
+      e.preventDefault()
+      document.querySelectorAll('.context-active').forEach(r=>r.classList.remove('context-active'))
+      row.classList.add('context-active')
+      currentContextRow = row
+      const isCall = row.closest('#callTable')
+      const isUnit = row.closest('#unitTable')
+      if(isCall){ showContextMenu('callContextMenu', e.pageX, e.pageY) }
+      else if(isUnit){
+        const callsign = row.getAttribute('data-callsign')
+        const unit = units.find(u=>u.callsign===callsign)
+        const dissolve = document.getElementById('dissolveUnionOption')
+        dissolve.style.display = (unit && unit.isUnion) ? 'block' : 'none'
+        showContextMenu('unitContextMenu', e.pageX, e.pageY)
+      }
+    })
+
+    function showContextMenu(id, x, y){
+      const menu = document.getElementById(id)
+      menu.style.display = 'block'; menu.style.left = x+'px'; menu.style.top = y+'px'
+      const r = menu.getBoundingClientRect()
+      if(r.right > innerWidth) menu.style.left = (x - r.width) + 'px'
+      if(r.bottom > innerHeight) menu.style.top = (y - r.height) + 'px'
+    }
+
+    /* ========================
+       Load & Render
+    =========================*/
+    function loadStoredData(){
+      document.getElementById('callTableBody').innerHTML = ''
+      document.getElementById('unitTableBody').innerHTML = ''
+      calls.forEach(addCallToTable)
+      units.forEach(addUnitToTable)
+      sortUnitTable()
+    }
+
+    function addCallToTable(call){
+      const tbody = document.getElementById('callTableBody')
+      const row = tbody.insertRow()
+      row.setAttribute('data-call-id', call.id)
+      row.style.cursor = 'pointer'; row.title='Right-click for options'
+      row.insertCell(0).textContent = call.id
+      row.insertCell(1).textContent = call.location
+      row.insertCell(2).textContent = call.type
+      row.insertCell(3).textContent = call.description
+      row.insertCell(4).textContent = call.units || ''
+      row.insertCell(5).textContent = call.dateTime
+      addRowSelectionBehavior(row, 'call')
+    }
+
+    function ridersToChips(riders){
+      if(!riders || riders.length===0) return ''
+      return riders.map(r=>`<span class="chip">${r.username} — ${r.type}</span>`).join(' ')
+    }
+
+    function addUnitToTable(unit){
+      const tbody = document.getElementById('unitTableBody')
+      const row = tbody.insertRow()
+      row.setAttribute('data-callsign', unit.callsign)
+      row.style.cursor='pointer'; row.title='Right-click for options'
+
+      const callsignCell = row.insertCell(0)
+      callsignCell.innerHTML = unit.isUnion ? `${unit.callsign} <span style="color:#03a9f4; font-size:10px;">[UNION]</span>` : unit.callsign
+      row.insertCell(1).textContent = unit.username || ''
+      row.insertCell(2).innerHTML = fmtStatusBadge(unit.status)
+      row.insertCell(3).textContent = unit.assignment || 'Unassigned'
+      const ridersCell = row.insertCell(4); ridersCell.innerHTML = ridersToChips(unit.riders)
+      row.insertCell(5).textContent = unit.supervisor ? 'Yes' : 'No'
+      row.insertCell(6).textContent = new Date().toLocaleString()
+
+      addRowSelectionBehavior(row, 'unit')
+    }
+
+    function refreshCallTable(){
+      document.getElementById('callTableBody').innerHTML = ''
+      calls.forEach(addCallToTable)
+    }
+    function refreshUnitTable(){
+      document.getElementById('unitTableBody').innerHTML = ''
+      units.forEach(addUnitToTable)
+      sortUnitTable()
+    }
+    function refreshTables(){ refreshCallTable(); refreshUnitTable(); }
+
+    function sortUnitTable(){
+      const tbody = document.getElementById('unitTableBody')
+      const rows = Array.from(tbody.rows)
+      rows.sort((a,b)=>{
+        const aC = a.cells[0].innerText.trim()
+        const bC = b.cells[0].innerText.trim()
+        const aU = aC.startsWith('U'), bU = bC.startsWith('U')
+        if(aU && !bU) return 1
+        if(!aU && bU) return -1
+        return aC.localeCompare(bC)
+      })
+      rows.forEach(r=>tbody.appendChild(r))
+    }
+
+    /* ========================
+       Forms (open/close)
+    =========================*/
+    function openForm(){
+      populateTypeSelect('type'); showModal('newCallModal')
+    }
+    function closeForm(){ closeAllModals() }
+
+    function openUnitForm(){ showModal('newUnitModal') }
+    function closeUnitForm(){ closeAllModals() }
+
+    function openUnionForm(){ populateUnionUnitsList(); document.getElementById('unionNumber').value = getNextUnionNumber(); showModal('newUnionModal') }
+    function closeUnionForm(){ clearUnionSelection(); closeAllModals() }
+
+    /* ========================
+       Call CRUD
+    =========================*/
+    function addCall(){
+      let location = document.getElementById('location').value.trim()
+      let type = document.getElementById('type').value.trim()
+      let description = document.getElementById('description').value.trim()
+      if(!location || !type || !description){ alert('Please fill out Location, Type, and Description.'); return }
+      location = sanitizeInput(location); type = sanitizeInput(type); description = sanitizeInput(description)
+      callCounter++; const id = callCounter
+      const call = { id, location, type, description, units:'', dateTime:new Date().toLocaleString() }
+      calls.push(call); addCallToTable(call); saveToStorage(); closeAllModals()
+      document.getElementById('location').value=''; document.getElementById('type').value=''; document.getElementById('description').value=''
+    }
+
+    function editCall(row){
+      if(!row) return
+      const id = parseInt(row.getAttribute('data-call-id'))
+      const call = calls.find(c=>c.id===id); if(!call) return
+      document.getElementById('editLocation').value = call.location
+      document.getElementById('editDescription').value = call.description
+      populateTypeSelect('editType'); document.getElementById('editType').value = call.type
+      editCallModal.currentCallId = id; showModal('editCallModal')
+    }
+    function saveCallEdit(){
+      const id = editCallModal.currentCallId
+      const call = calls.find(c=>c.id===id); if(!call) return
+      call.location = document.getElementById('editLocation').value
+      call.type = document.getElementById('editType').value
+      call.description = document.getElementById('editDescription').value
+      refreshCallTable(); saveToStorage(); closeAllModals()
+    }
+
+    function deleteCall(row){
+      if(!row) return
+      const id = parseInt(row.getAttribute('data-call-id'))
+      if(!confirm('Delete this call?')) return
+      const idx = calls.findIndex(c=>c.id===id); if(idx!==-1) calls.splice(idx,1)
+      // Free any units
+      units.forEach(u=>{ if(u.assignment === `Call #${id}`){ u.assignment='Unassigned'; u.status='Available' } })
+      refreshTables(); saveToStorage()
+    }
+
+    function viewCallDetails(row){
+      if(!row) return
+      const id = parseInt(row.getAttribute('data-call-id'))
+      const call = calls.find(c=>c.id===id); if(!call) return
+      document.getElementById('detailsTitle').textContent = `Call #${call.id} Details`
+      document.getElementById('detailsContent').innerHTML = `
+        <p><strong>Location:</strong> ${call.location}</p>
+        <p><strong>Type:</strong> ${call.type}</p>
+        <p><strong>Description:</strong> ${call.description}</p>
+        <p><strong>Assigned Units:</strong> ${call.units||'None'}</p>
+        <p><strong>Created:</strong> ${call.dateTime}</p>`
+      showModal('detailsModal')
+    }
+
+    /* ========================
+       Unit CRUD (+ username + riders)
+    =========================*/
+    function addUnit(){
+      const callsign = document.getElementById('callsign').value.trim()
+      const username = document.getElementById('username').value.trim()
+      const supervisor = document.getElementById('supervisor').checked
+      if(!callsign){ alert('Please enter a Callsign.'); return }
+      if(units.find(u=>u.callsign===callsign)){ alert('A unit with this callsign already exists.'); return }
+      const unit = { callsign, username, supervisor, status:'Available', assignment:'Unassigned', riders:[] }
+      units.push(unit); addUnitToTable(unit); saveToStorage(); closeAllModals(); sortUnitTable()
+      document.getElementById('callsign').value=''; document.getElementById('username').value=''; document.getElementById('supervisor').checked=false
+    }
+
+    function editUnit(row){
+      if(!row) return
+      const callsign = row.getAttribute('data-callsign')
+      const unit = units.find(u=>u.callsign===callsign); if(!unit) return
+      document.getElementById('editCallsign').value = unit.callsign
+      document.getElementById('editUsername').value = unit.username || ''
+      document.getElementById('editSupervisor').checked = !!unit.supervisor
+      editUnitModal.currentCallsign = callsign; showModal('editUnitModal')
+    }
+
+    function saveUnitEdit(){
+      const oldC = editUnitModal.currentCallsign
+      const newC = document.getElementById('editCallsign').value.trim()
+      const username = document.getElementById('editUsername').value.trim()
+      const supervisor = document.getElementById('editSupervisor').checked
+      const unit = units.find(u=>u.callsign===oldC); if(!unit) return
+      if(newC!==oldC && units.find(u=>u.callsign===newC)){ alert('A unit with this callsign already exists.'); return }
+      // apply
+      unit.callsign = newC; unit.username = username; unit.supervisor = supervisor
+      // update calls lists
+      if(newC!==oldC){ calls.forEach(call=>{ if(call.units && call.units.includes(oldC)){ call.units = call.units.split(', ').map(u=>u===oldC?newC:u).join(', ') } }) }
+      refreshTables(); saveToStorage(); closeAllModals()
+    }
+
+    function toggleUnitStatus(row){
+      if(!row) return
+      const callsign = row.getAttribute('data-callsign')
+      const unit = units.find(u=>u.callsign===callsign); if(!unit) return
+      if(unit.assignment!=='Unassigned'){ alert('Detach from call first.'); return }
+      unit.status = (unit.status==='Available') ? 'Busy' : 'Available'
+      refreshUnitTable(); saveToStorage()
+    }
+
+    function deleteUnit(row){
+      if(!row) return
+      const callsign = row.getAttribute('data-callsign')
+      const unit = units.find(u=>u.callsign===callsign)
+      const msg = (unit && unit.isUnion) ? `Delete union ${callsign}? This will remove the union.` : `Delete unit ${callsign}?`
+      if(!confirm(msg)) return
+      const idx = units.findIndex(u=>u.callsign===callsign); if(idx!==-1) units.splice(idx,1)
+      calls.forEach(call=>{ if(call.units){ call.units = call.units.split(', ').filter(u=>u!==callsign).join(', ') } })
+      refreshTables(); saveToStorage()
+    }
+
+    // Riders
+    function manageRiders(row){
+      if(!row) return
+      const callsign = row.getAttribute('data-callsign')
+      const unit = units.find(u=>u.callsign===callsign); if(!unit) return
+      ridersModal.currentCallsign = callsign
+      document.getElementById('ridersUnit').textContent = callsign
+      renderRidersList(unit)
+      showModal('ridersModal')
+    }
+
+    function renderRidersList(unit){
+      const cont = document.getElementById('ridersList')
+      if(!unit.riders) unit.riders = []
+      cont.innerHTML = unit.riders.length ? '' : '<p style="margin:4px 0; color:#555;">No riders.</p>'
+      unit.riders.forEach((r, idx)=>{
+        const row = document.createElement('div')
+        row.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:6px; border:1px solid #ddd; border-radius:6px; margin-bottom:6px; background:#fafafa;'
+        row.innerHTML = `<div><strong>${r.username}</strong> — ${r.type}</div><div class="btn-row"><button class="btn-outline" onclick="promoteRider('${unit.callsign}', ${idx})">Promote</button><button class="btn-red" onclick="removeRider('${unit.callsign}', ${idx})">Remove</button></div>`
+        cont.appendChild(row)
+      })
+    }
+
+    function addRider(){
+      const callsign = ridersModal.currentCallsign
+      const unit = units.find(u=>u.callsign===callsign); if(!unit) return
+      const username = document.getElementById('riderName').value.trim()
+      const type = document.getElementById('riderType').value
+      if(!username){ alert('Enter a username.'); return }
+      if(!unit.riders) unit.riders = []
+      unit.riders.push({username, type})
+      document.getElementById('riderName').value=''
+      renderRidersList(unit)
+      refreshUnitTable(); saveToStorage()
+    }
+
+    function removeRider(callsign, idx){
+      const unit = units.find(u=>u.callsign===callsign); if(!unit || !unit.riders) return
+      unit.riders.splice(idx,1)
+      renderRidersList(unit)
+      refreshUnitTable(); saveToStorage()
+    }
+
+    function promoteRider(callsign, idx){
+      const unit = units.find(u=>u.callsign===callsign); if(!unit || !unit.riders) return
+      const r = unit.riders[idx]
+      // Toggle Ridealong <-> Officer Ridealong
+      r.type = (r.type === 'Ridealong') ? 'Officer Ridealong' : 'Ridealong'
+      renderRidersList(unit)
+      refreshUnitTable(); saveToStorage()
+    }
+
+    /* ========================
+       Assign / Detach
+    =========================*/
+    function assignUnitToCall(row){
+      if(!row) return
+      const callsign = row.getAttribute('data-callsign')
+      document.getElementById('assigningUnit').textContent = callsign
+      fillCallSelect('callSelect')
+      assignmentModal.currentUnit = callsign
+      showModal('assignmentModal')
+    }
+
+    function confirmAssignment(){
+      const callId = document.getElementById('callSelect').value
+      const callsign = assignmentModal.currentUnit
+      if(!callId){ alert('Select a call.'); return }
+      const unit = units.find(u=>u.callsign===callsign)
+      if(unit){ unit.assignment = `Call #${callId}`; unit.status = 'Busy' }
+      const call = calls.find(c=>c.id == callId)
+      if(call){ const list = call.units ? call.units.split(', ') : []; if(!list.includes(callsign)){ list.push(callsign); call.units = list.join(', ') } }
+      refreshTables(); saveToStorage(); closeAllModals()
+    }
+
+    function detachUnitFromCall(row){
+      if(!row) return
+      const callsign = row.getAttribute('data-callsign')
+      const unit = units.find(u=>u.callsign===callsign)
+      if(!unit || unit.assignment==='Unassigned'){ alert('Unit is not assigned.'); return }
+      const m = unit.assignment.match(/Call #(\d+)/)
+      if(m){ const id = parseInt(m[1]); const call = calls.find(c=>c.id===id); if(call && call.units){ call.units = call.units.split(', ').filter(u=>u!==callsign).join(', ') } }
+      unit.assignment = 'Unassigned'; unit.status = 'Available'
+      refreshTables(); saveToStorage()
+    }
+
+    // Multi-select helpers
+    function openBulkAssignModal(){
+      if(selectedUnits.size===0){ alert('Select one or more units first.'); return }
+      document.getElementById('bulkAssignCount').textContent = `${selectedUnits.size} units selected.`
+      fillCallSelect('bulkCallSelect')
+      showModal('bulkAssignModal')
+    }
+
+    function confirmBulkAssignment(){
+      const callId = document.getElementById('bulkCallSelect').value
+      if(!callId){ alert('Select a call.'); return }
+      const call = calls.find(c=>c.id == callId); if(!call) return
+      const current = call.units ? call.units.split(', ') : []
+      selectedUnits.forEach(callsign=>{
+        const unit = units.find(u=>u.callsign===callsign)
+        if(!unit) return
+        // detach from previous
+        if(unit.assignment!=='Unassigned'){
+          const m = unit.assignment.match(/Call #(\d+)/)
+          if(m){ const prevId = parseInt(m[1]); const prev = calls.find(c=>c.id===prevId); if(prev && prev.units){ prev.units = prev.units.split(', ').filter(u=>u!==callsign).join(', ') } }
+        }
+        unit.assignment = `Call #${callId}`; unit.status='Busy'
+        if(!current.includes(callsign)) current.push(callsign)
+      })
+      call.units = current.join(', ')
+      refreshTables(); saveToStorage(); closeAllModals()
+    }
+
+    function detachSelectedUnits(){
+      if(selectedUnits.size===0){ alert('Select one or more units first.'); return }
+      selectedUnits.forEach(callsign=>{
+        const unit = units.find(u=>u.callsign===callsign); if(!unit) return
+        if(unit.assignment!=='Unassigned'){
+          const m = unit.assignment.match(/Call #(\d+)/)
+          if(m){ const id = parseInt(m[1]); const call = calls.find(c=>c.id===id); if(call && call.units){ call.units = call.units.split(', ').filter(u=>u!==callsign).join(', ') } }
+          unit.assignment='Unassigned'; unit.status='Available'
+        }
+      })
+      refreshTables(); saveToStorage()
+    }
+
+    function clearUnitSelection(){ selectedUnits.clear(); document.querySelectorAll('#unitTableBody tr').forEach(r=>r.classList.remove('selected')); updateSelectionCounts() }
+    function clearCallSelection(){ selectedCalls.clear(); document.querySelectorAll('#callTableBody tr').forEach(r=>r.classList.remove('selected')); updateSelectionCounts() }
+
+    // Attach/Detach via Call context
+    function assignUnitsToCall(row){
+      if(!row) return
+      const id = parseInt(row.getAttribute('data-call-id'))
+      const call = calls.find(c=>c.id===id); if(!call) return
+      document.getElementById('attachingToCall').textContent = `Call #${call.id} — ${call.location}`
+      const cont = document.getElementById('allUnitsForAttach'); cont.innerHTML=''
+      units.forEach(u=>{
+        const div = document.createElement('div')
+        div.style.marginBottom = '6px'
+        const checked = (call.units && call.units.includes(u.callsign)) ? 'checked' : ''
+        div.innerHTML = `<label><input type="checkbox" value="${u.callsign}" ${checked}> ${u.callsign} (${u.status}) — ${u.assignment}</label>`
+        cont.appendChild(div)
+      })
+      attachUnitsModal.currentCallId = id; showModal('attachUnitsModal')
+    }
+
+    function confirmAttachUnits(){
+      const id = attachUnitsModal.currentCallId
+      const call = calls.find(c=>c.id==id); if(!call) return
+      const selected = Array.from(document.querySelectorAll('#allUnitsForAttach input[type="checkbox"]:checked')).map(cb=>cb.value)
+      // sync units
+      units.forEach(u=>{
+        const should = selected.includes(u.callsign)
+        const isOnCall = call.units && call.units.split(', ').includes(u.callsign)
+        if(should && !isOnCall){
+          // detach from previous
+          if(u.assignment!=='Unassigned'){
+            const m = u.assignment.match(/Call #(\d+)/)
+            if(m){ const prevId = parseInt(m[1]); const prev = calls.find(c=>c.id===prevId); if(prev && prev.units){ prev.units = prev.units.split(', ').filter(x=>x!==u.callsign).join(', ') } }
+          }
+          u.assignment = `Call #${id}`; u.status='Busy'
+        } else if(!should && isOnCall){
+          u.assignment='Unassigned'; u.status='Available'
+        }
+      })
+      call.units = selected.join(', ')
+      refreshTables(); saveToStorage(); closeAllModals()
+    }
+
+    function detachAllUnitsFromCall(row){
+      if(!row) return
+      const id = parseInt(row.getAttribute('data-call-id'))
+      const call = calls.find(c=>c.id===id); if(!call || !call.units){ alert('No units on this call.'); return }
+      if(!confirm(`Detach all units from Call #${id}?`)) return
+      call.units.split(', ').forEach(cs=>{ const u = units.find(x=>x.callsign===cs); if(u){ u.assignment='Unassigned'; u.status='Available' } })
+      call.units = ''
+      refreshTables(); saveToStorage()
+    }
+
+    /* ========================
+       Unions
+    =========================*/
+    function getNextUnionNumber(){
+      let maxN = 0
+      units.forEach(u=>{ if(u.callsign.startsWith('U')){ const n = parseInt(u.callsign.substring(1)); if(!isNaN(n) && n>maxN) maxN=n } })
+      return maxN + 1
+    }
+
+    function populateUnionUnitsList(){
+      const c = document.getElementById('unionUnitsList'); c.innerHTML=''
+      const available = units.filter(u=>!u.callsign.startsWith('U') && !u.isUnionMember)
+      if(available.length===0){ c.innerHTML = '<p style="color:#666; text-align:center;">No available units for union</p>'; return }
+      available.forEach(u=>{
+        const div = document.createElement('div')
+        div.style.cssText='margin-bottom:8px; padding:6px; border:1px solid #ddd; border-radius:6px;'
+        div.innerHTML = `<label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" value="${u.callsign}" onchange="updateUnionSelection()"> <strong>${u.callsign}</strong> <span style="color:#666;">(${u.status}) — ${u.assignment}${u.supervisor?' — SUPERVISOR':''}</span></label>`
+        c.appendChild(div)
+      })
+    }
+
+    function updateUnionSelection(){
+      const checked = document.querySelectorAll('#unionUnitsList input[type="checkbox"]:checked')
+      const count = checked.length
+      document.getElementById('selectedUnionCount').textContent = `Selected: ${count}/8`
+      const all = document.querySelectorAll('#unionUnitsList input[type="checkbox"]')
+      all.forEach(cb=>{ cb.disabled = (!cb.checked && count>=8) })
+    }
+    function clearUnionSelection(){ document.querySelectorAll('#unionUnitsList input[type="checkbox"]').forEach(cb=>{ cb.checked=false; cb.disabled=false }); document.getElementById('selectedUnionCount').textContent='Selected: 0/8' }
+
+    function createUnion(){
+      const num = document.getElementById('unionNumber').value.trim()
+      const checked = Array.from(document.querySelectorAll('#unionUnitsList input[type="checkbox"]:checked')).map(cb=>cb.value)
+      if(!num || isNaN(num) || num<1){ alert('Enter a valid union number.'); return }
+      if(checked.length<2){ alert('Select at least 2 units.'); return }
+      if(checked.length>8){ alert('Max 8 units.'); return }
+      const unionCallsign = `U${num}`
+      if(units.find(u=>u.callsign===unionCallsign)){ alert('Union callsign already exists.'); return }
+      const selectedUnits = units.filter(u=>checked.includes(u.callsign))
+      const hasSup = selectedUnits.some(u=>u.supervisor)
+      const union = { callsign: unionCallsign, supervisor: hasSup, status:'Available', assignment:'Unassigned', isUnion:true, unionMembers: selectedUnits.map(u=>({ callsign:u.callsign, supervisor:u.supervisor, originalStatus:u.status, originalAssignment:u.assignment })) }
+      // Remove members from main list
+      selectedUnits.forEach(u=>{ const i = units.findIndex(x=>x.callsign===u.callsign); if(i!==-1) units.splice(i,1) })
+      units.push(union); addUnitToTable(union); saveToStorage(); closeUnionForm(); refreshUnitTable(); alert(`Union ${unionCallsign} created with ${checked.length} units.`)
+    }
+
+    function dissolveUnion(row){
+      if(!row) return
+      const callsign = row.getAttribute('data-callsign')
+      const union = units.find(u=>u.callsign===callsign && u.isUnion)
+      if(!union){ alert('Not a union.'); return }
+      if(!confirm(`Dissolve union ${callsign}?`)) return
+      union.unionMembers.forEach(m=>{ units.push({ callsign:m.callsign, supervisor:m.supervisor, status:'Available', assignment:'Unassigned', isUnionMember:false, riders:[] }) })
+      const idx = units.findIndex(u=>u.callsign===callsign); if(idx!==-1) units.splice(idx,1)
+      calls.forEach(call=>{ if(call.units && call.units.includes(callsign)){ call.units = call.units.split(', ').filter(u=>u!==callsign).join(', ') } })
+      refreshTables(); saveToStorage(); alert(`Union ${callsign} dissolved.`)
+    }
+
+    /* ========================
+       Bulk delete (calls)
+    =========================*/
+    function deleteSelectedCalls(){
+      if(selectedCalls.size===0){ alert('Select one or more calls first.'); return }
+      if(!confirm(`Delete ${selectedCalls.size} selected call(s)?`)) return
+      selectedCalls.forEach(id=>{
+        const idx = calls.findIndex(c=>c.id===id); if(idx!==-1) calls.splice(idx,1)
+        units.forEach(u=>{ if(u.assignment===`Call #${id}`){ u.assignment='Unassigned'; u.status='Available' } })
+      })
+      clearCallSelection(); refreshTables(); saveToStorage()
+    }
+
+    /* ========================
+       Modals / Overlays
+    =========================*/
+    function showModal(id){ document.getElementById('modalOverlay').style.display='block'; document.getElementById(id).style.display='block' }
+    function closeAllModals(){ document.getElementById('modalOverlay').style.display='none'; document.querySelectorAll('.action-modal').forEach(m=>m.style.display='none') }
+
+    /* ========================
+       Type Select (Fire-focused)
+    =========================*/
+    const FIRE_TYPES = [
+      'FIA - Fire Alarm','SMK - Smoke Investigation','STC - Structure Fire','WLD - Wildland Fire','VEH - Vehicle Fire','GAS - Gas Leak/Odor','HAZ - Hazardous Materials','MCI - Mass Casualty Incident','EMS - Medical Aid','RES - Rescue','WTR - Water Rescue','TRN - Technical Rescue','INV - Investigation','POAF - Police Assist Fire','READ - Read Me','OTH - Other'
+    ]
+    function populateTypeSelect(selectId){
+      const sel = document.getElementById(selectId)
+      sel.innerHTML = '<option value="">Select a Call Type…</option>' + FIRE_TYPES.sort().map(t=>`<option value="${t}">${t}</option>`).join('')
+      if(!sel.tomselect){ new TomSelect('#'+selectId, {create:false, sortField:{field:'text', direction:'asc'}}) }
+    }
+    function fillCallSelect(selectId){
+      const sel = document.getElementById(selectId); sel.innerHTML = '<option value="">Choose a call…</option>'
+      calls.forEach(c=>{ const opt = document.createElement('option'); opt.value = c.id; opt.textContent = `Call #${c.id} — ${c.location}`; sel.appendChild(opt) })
+    }
+
+    /* ========================
+       Notepad / Clock / Theme / MAYDAY
+    =========================*/
+    function toggleNotepad(){ const pad = document.getElementById('notepad'); const isVisible = pad.style.display!=="none"; pad.style.display = isVisible? 'none':'flex'; localStorage.setItem('webcad_notepadVisible', !isVisible) }
+    function loadNotepadContent(){ const s = localStorage.getItem('webcad_notepad'); if(s) document.getElementById('notepadText').value = s }
+    function makeNotepadDraggable(){
+      const el = document.getElementById('notepad'); const head = document.getElementById('notepadHeader')
+      let drag = false, ix=0, iy=0, ox=0, oy=0
+      head.addEventListener('mousedown', e=>{ drag=true; ix=e.clientX-ox; iy=e.clientY-oy })
+      document.addEventListener('mousemove', e=>{ if(!drag) return; e.preventDefault(); ox=e.clientX-ix; oy=e.clientY-iy; const r=el.getBoundingClientRect(); const maxX=innerWidth-r.width, maxY=innerHeight-r.height; ox=Math.max(0,Math.min(ox,maxX)); oy=Math.max(0,Math.min(oy,maxY)); el.style.left=ox+'px'; el.style.top=oy+'px'; localStorage.setItem('webcad_notepadX', ox); localStorage.setItem('webcad_notepadY', oy) })
+      document.addEventListener('mouseup', ()=>drag=false)
+      const sx = localStorage.getItem('webcad_notepadX'), sy = localStorage.getItem('webcad_notepadY'); if(sx&&sy){ el.style.left = sx+'px'; el.style.top = sy+'px' }
+      const sw = localStorage.getItem('webcad_notepadWidth'), sh = localStorage.getItem('webcad_notepadHeight'); if(sw&&sh){ el.style.width=sw+'px'; el.style.height=sh+'px' }
+      new ResizeObserver(entries=>{ for(const ent of entries){ const {width,height} = ent.contentRect; localStorage.setItem('webcad_notepadWidth', width); localStorage.setItem('webcad_notepadHeight', height) } }).observe(el)
+    }
+
+    function updateClock(){ document.getElementById('clock').textContent = new Date().toLocaleString() }
+    function toggleTheme(){ document.body.classList.toggle('dark-theme'); localStorage.setItem('webcad_darkTheme', document.body.classList.contains('dark-theme')) }
+    function toggleSignal100(){ const b = document.getElementById('signal100Banner'); const on = b.style.display!=='none'; b.style.display = on?'none':'block'; localStorage.setItem('webcad_signal100', !on) }
+
+    /* ========================
+       Boot
+    =========================*/
+    document.addEventListener('DOMContentLoaded', ()=>{
+      if(localStorage.getItem('webcad_darkTheme')==='true'){ document.body.classList.add('dark-theme') }
+      if(localStorage.getItem('webcad_signal100')==='true'){ document.getElementById('signal100Banner').style.display='block' }
+      if(localStorage.getItem('webcad_notepadVisible')==='false'){ document.getElementById('notepad').style.display='none' }
+      loadStoredData(); loadNotepadContent(); updateClock(); setInterval(updateClock, 1000); makeNotepadDraggable()
+      // Persist notepad text
+      document.getElementById('notepadText').addEventListener('input', function(){ localStorage.setItem('webcad_notepad', this.value) })
+      // Ensure type selects are hydrated for new/edit
+      populateTypeSelect('type')
+    })
+  </script>
+</body>
+</html>
