@@ -1,118 +1,482 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebCAD</title>
-    <style>
-    input[type=text], select {
-  width: 100%;
-  padding: 12px 20px;
-  border: 1px solid #ccc;
-  display: block;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-textarea {  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;}
-  
-   input[type=number] {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-input[type=checkbox] { 
-  margin: 15px 15px;
-  display: block;
-  width: 25px;
-  height: 25px;
-}
-
-button {
-   background-color: #444;
-  border: 1px solid black;
-  color: white;
-  padding: 5px 5px;
-  text-decoration: none;
-  margin: 4px 2px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #ccc;
-}
- .homepage {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #444;
-            color: #fff;
-            
-        }
-      
-
-        .homepage h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
-        }
-
-        .homepage p {
-            font-size: 18px;
-            margin-bottom: 20px;
-            text-align: center;
-             margin-right: 120px;
-  margin-left: 120px;
-        }
-
-        .homepage-buttons {
-            display: flex;
-            gap: 20px;
-        }
-
-        .homepage-button {
-            background-color: #444;
-            border: 1px solid #fff;
-            color: #fff;
-            padding: 10px 20px;
-            font-size: 18px;
-            text-decoration: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .homepage-button:hover {
-            background-color: #ccc;
-        }
-
-    </style>
+  <meta charset="utf-8" />
+  <title>WebCAD — Records</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#0f1115; --panel:#151822; --text:#e8eaf0; --muted:#a9b0c0; --line:#262a36; --accent:#7aa2ff;
+      --radius:14px; --shadow:0 10px 28px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,Segoe UI,Roboto,Inter,Arial}
+    header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line)}
+    h1{margin:0;font-size:18px;letter-spacing:.3px}
+    .wrap{max-width:1000px;margin:28px auto;padding:0 16px}
+    .tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+    .tab{padding:10px 14px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--text);cursor:pointer}
+    .tab.active{background:var(--panel);border-color:var(--panel)}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input[type="text"], input[type="datetime-local"], input[type="number"], select, textarea{
+      width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#0f121a;color:var(--text)
+    }
+    textarea{min-height:120px;resize:vertical}
+    .muted{color:var(--muted);font-size:13px}
+    .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:10px}
+    .btn{padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:#0f121a;color:var(--text);cursor:pointer}
+    .btn.primary{background:var(--accent);border-color:var(--accent);color:#0b1020;font-weight:600}
+    .pill{font-size:12px;padding:3px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+    .settings{display:flex;gap:8px;align-items:center}
+    .help{font-size:13px}
+    .hidden{display:none}
+  </style>
 </head>
 <body>
-<div class="homepage">
-        <h1>In Development</h1>
-       
-        <p>This page is currently unavailable, please create an issue via the button below if you believe this is a mistake.</p>
-        <div class="homepage-buttons">
-            <a href="https://github.com/TheGerd1/WebCAD/issues" class="homepage-button">Issues</a>
-            <a href="index.html" class="homepage-button">Home</a>
-            
-            
+  <header>
+    <h1>WebCAD — Records</h1>
+    <div class="settings">
+      <span class="pill" id="proxyStatus">Proxy: not set</span>
+      <button class="btn" id="openSettings">Settings</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-target="fireForm">Fire Incident Report</button>
+      <button class="tab" data-target="otherForm">Other Incident Report</button>
+      <button class="tab" data-target="medicalForm">Medical Incident Report</button>
+    </div>
+
+    <!-- Settings -->
+    <div class="card hidden" id="settingsCard">
+      <h3 style="margin:0 0 8px">Submission Settings</h3>
+      <p class="muted" style="margin:0 0 12px">Your records will POST to your proxy, which then forwards to your Discord webhook.</p>
+      <div class="row">
+        <div>
+          <label>Proxy URL (HTTPS recommended)</label>
+          <input type="text" id="proxyUrl" placeholder="e.g., https://your-domain.com/discord-proxy" />
+          <p class="muted">Keep this private; don’t share in public repos.</p>
         </div>
+        <div>
+          <label>Server / Channel Label (for the embed footer)</label>
+          <input type="text" id="serverLabel" placeholder="e.g., Lakeview Records Bot" />
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="saveSettings">Save</button>
+        <button class="btn" id="closeSettings">Close</button>
+      </div>
+    </div>
 
-         
-</div>
+    <!-- Fire Incident Report -->
+    <form class="card" id="fireForm">
+      <h3 style="margin-top:0">Fire Incident Report</h3>
+      <div class="row-3">
+        <div>
+          <label>Incident Number</label>
+          <input type="text" name="incidentNumber" required />
+        </div>
+        <div>
+          <label>Date & Time (Start)</label>
+          <input type="datetime-local" name="startTime" required />
+        </div>
+        <div>
+          <label>Date & Time (End)</label>
+          <input type="datetime-local" name="endTime" />
+        </div>
+      </div>
 
+      <div class="row">
+        <div>
+          <label>Location</label>
+          <input type="text" name="location" placeholder="123 Main St, Apt 3B" required />
+        </div>
+        <div>
+          <label>Officer in Charge</label>
+          <input type="text" name="oic" placeholder="Lt. Name / Unit" required />
+        </div>
+      </div>
 
+      <div class="row">
+        <div>
+          <label>Fire Type</label>
+          <select name="fireType" required>
+            <option value="">Select…</option>
+            <option>Brush</option>
+            <option>Residential</option>
+            <option>Commercial</option>
+          </select>
+        </div>
+        <div>
+          <label>Alarm Level</label>
+          <select name="alarmLevel">
+            <option>Single Alarm</option>
+            <option>Second Alarm</option>
+            <option>Third Alarm</option>
+            <option>Greater Alarm</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Apparatus On Scene (multi-select; include arrival order if desired)</label>
+          <select name="apparatus" multiple size="5">
+            <option>Engine 1</option><option>Engine 2</option><option>Engine 3</option>
+            <option>Truck 1</option><option>Rescue 1</option><option>Medic 1</option>
+            <option>Chief 1</option><option>Safety 1</option><option>Tanker 1</option>
+          </select>
+          <p class="muted">Hold Ctrl/Cmd to select multiple.</p>
+        </div>
+        <div>
+          <label>Firefighters (multi-select)</label>
+          <select name="firefighters" multiple size="5">
+            <option>FF A. Rivera</option><option>FF J. Kim</option><option>FF T. Nguyen</option>
+            <option>FF S. Patel</option><option>FF D. Carter</option><option>FF M. Lopez</option>
+          </select>
+          <p class="muted">Include riders/relief if applicable.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Actions Taken (brief)</label>
+          <textarea name="actions" placeholder="Primary search, interior attack, vertical ventilation, utilities secured…" required></textarea>
+        </div>
+        <div>
+          <label>Damage / Outcome</label>
+          <textarea name="outcome" placeholder="Fire held to kitchen, minor extension to attic, no civilian injuries…"></textarea>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Hydrant / Water Supply</label>
+          <input type="text" name="water" placeholder="Hydrant @ 3rd & Pine, 5” supply" />
+        </div>
+        <div>
+          <label>Cause (if known)</label>
+          <input type="text" name="cause" placeholder="Undetermined / Cooking / Electrical…" />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="reset" class="btn">Clear</button>
+        <button type="submit" class="btn primary">Submit to Discord</button>
+      </div>
+    </form>
+
+    <!-- Other Incident Report -->
+    <form class="card hidden" id="otherForm">
+      <h3 style="margin-top:0">Other Incident Report</h3>
+      <div class="row-3">
+        <div>
+          <label>Incident Number</label>
+          <input type="text" name="incidentNumber" required />
+        </div>
+        <div>
+          <label>Date & Time (Start)</label>
+          <input type="datetime-local" name="startTime" required />
+        </div>
+        <div>
+          <label>Date & Time (End)</label>
+          <input type="datetime-local" name="endTime" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Location</label>
+          <input type="text" name="location" required />
+        </div>
+        <div>
+          <label>Incident Type</label>
+          <input type="text" name="type" placeholder="Hazmat spill, alarm activation, stand-by, public assist…" required />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Apparatus On Scene (multi-select)</label>
+          <select name="apparatus" multiple size="6">
+            <option>Engine 1</option><option>Engine 2</option><option>Engine 3</option>
+            <option>Truck 1</option><option>Rescue 1</option><option>Medic 1</option>
+            <option>Chief 1</option><option>Utility 1</option>
+          </select>
+        </div>
+        <div>
+          <label>Officer in Charge</label>
+          <input type="text" name="oic" required />
+          <label style="margin-top:10px">Personnel (multi-select)</label>
+          <select name="personnel" multiple size="4">
+            <option>FF A. Rivera</option><option>FF J. Kim</option><option>FF T. Nguyen</option>
+            <option>FF S. Patel</option><option>FF D. Carter</option><option>FF M. Lopez</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Narrative / Details</label>
+      <textarea name="narrative" placeholder="What was found, actions taken, disposition…" required></textarea>
+
+      <div class="actions">
+        <button type="reset" class="btn">Clear</button>
+        <button type="submit" class="btn primary">Submit to Discord</button>
+      </div>
+    </form>
+
+    <!-- Medical Incident Report -->
+    <form class="card hidden" id="medicalForm">
+      <h3 style="margin-top:0">Medical Incident Report</h3>
+      <div class="row-3">
+        <div>
+          <label>Incident Number</label>
+          <input type="text" name="incidentNumber" required />
+        </div>
+        <div>
+          <label>Date & Time (Start)</label>
+          <input type="datetime-local" name="startTime" required />
+        </div>
+        <div>
+          <label>Date & Time (End)</label>
+          <input type="datetime-local" name="endTime" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Location</label>
+          <input type="text" name="location" required />
+        </div>
+        <div>
+          <label>Officer / Provider in Charge</label>
+          <input type="text" name="oic" placeholder="Lead medic / officer" required />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Patient Age</label>
+          <input type="number" name="age" min="0" placeholder="Years" />
+        </div>
+        <div>
+          <label>Patient Sex</label>
+          <select name="sex">
+            <option value="">Unknown/Not stated</option>
+            <option>Female</option><option>Male</option><option>Non-binary</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Injuries / Illness (brief)</label>
+          <textarea name="injuries" placeholder="CC, visible injuries, pertinent negatives…" required></textarea>
+        </div>
+        <div>
+          <label>Treatment / Interventions</label>
+          <textarea name="treatment" placeholder="ABC, vitals, splinting, O2, medications, etc."></textarea>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Final Patient Disposition</label>
+          <select name="disposition" required>
+            <option value="">Select…</option>
+            <option>Transported</option>
+            <option>Refused Care (RMA/AMA)</option>
+            <option>Treated & Released</option>
+            <option>No Patient Found</option>
+            <option>Deceased</option>
+          </select>
+        </div>
+        <div>
+          <label>Receiving Facility (if transported)</label>
+          <input type="text" name="facility" placeholder="Hospital name / bay" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Units / Personnel On Scene (multi-select)</label>
+          <select name="units" multiple size="6">
+            <option>Medic 1</option><option>Medic 2</option><option>Engine 1</option>
+            <option>Rescue 1</option><option>Chief 1</option><option>Utility 1</option>
+          </select>
+        </div>
+        <div>
+          <label>Narrative</label>
+          <textarea name="narrative" placeholder="Scene size-up, patient assessment, course, handoff…" required></textarea>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="reset" class="btn">Clear</button>
+        <button type="submit" class="btn primary">Submit to Discord</button>
+      </div>
+    </form>
+
+    <p class="help">
+      Tip: click <strong>Settings</strong> to set your Proxy URL once. Submissions will show up in your Discord channel as embeds.
+    </p>
+  </div>
+
+  <script>
+    // --- Basic UI state
+    const tabs = document.getElementById('tabs');
+    const forms = ['fireForm','otherForm','medicalForm'].map(id => document.getElementById(id));
+    tabs.addEventListener('click', (e)=>{
+      if(!(e.target instanceof HTMLElement)) return;
+      const btn = e.target.closest('.tab'); if(!btn) return;
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      btn.classList.add('active');
+      const target = btn.getAttribute('data-target');
+      forms.forEach(f=>f.classList.toggle('hidden', f.id!==target));
+    });
+
+    // --- Settings
+    const proxyStatus = document.getElementById('proxyStatus');
+    const settingsCard = document.getElementById('settingsCard');
+    const openSettings = document.getElementById('openSettings');
+    const closeSettings = document.getElementById('closeSettings');
+    const saveSettings = document.getElementById('saveSettings');
+    const proxyUrlInput = document.getElementById('proxyUrl');
+    const serverLabelInput = document.getElementById('serverLabel');
+
+    function loadSettings(){
+      proxyUrlInput.value = localStorage.getItem('records_proxy_url') || '';
+      serverLabelInput.value = localStorage.getItem('records_server_label') || '';
+      proxyStatus.textContent = proxyUrlInput.value ? 'Proxy: set' : 'Proxy: not set';
+      proxyStatus.style.color = proxyUrlInput.value ? '#8fffbd' : '#ffb6b6';
+    }
+    loadSettings();
+
+    openSettings.onclick = ()=>{ settingsCard.classList.remove('hidden'); };
+    closeSettings.onclick = ()=>{ settingsCard.classList.add('hidden'); };
+    saveSettings.onclick = ()=>{
+      localStorage.setItem('records_proxy_url', proxyUrlInput.value.trim());
+      localStorage.setItem('records_server_label', serverLabelInput.value.trim());
+      loadSettings();
+      settingsCard.classList.add('hidden');
+    };
+
+    // --- Helpers
+    function multiSelectToArray(select){
+      return Array.from(select.selectedOptions).map(o=>o.value);
+    }
+    function field(form, name){ return form.querySelector(`[name="${name}"]`); }
+    function fmtDT(v){ return v ? new Date(v).toLocaleString() : '—'; }
+
+    async function postToProxy(embed){
+      const proxyUrl = localStorage.getItem('records_proxy_url') || '';
+      if(!proxyUrl){ alert('Set your Proxy URL in Settings first.'); throw new Error('No proxy URL'); }
+      const payload = { embeds: [embed] };
+      const res = await fetch(proxyUrl, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if(!res.ok){
+        const txt = await res.text().catch(()=> '');
+        throw new Error(`Proxy responded ${res.status}: ${txt}`);
+      }
+      return true;
+    }
+
+    function footer(){
+      const label = localStorage.getItem('records_server_label') || 'WebCAD Records';
+      return { text: label + ' • ' + new Date().toLocaleString() };
+    }
+
+    // --- Form submitters
+    document.getElementById('fireForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const f = e.currentTarget;
+      const embed = {
+        title: '🔥 Fire Incident Report',
+        color: 0xE25822,
+        fields: [
+          { name:'Incident #', value: field(f,'incidentNumber').value, inline:true },
+          { name:'Start', value: fmtDT(field(f,'startTime').value), inline:true },
+          { name:'End', value: fmtDT(field(f,'endTime').value), inline:true },
+          { name:'Location', value: field(f,'location').value || '—' },
+          { name:'Officer in Charge', value: field(f,'oic').value || '—', inline:true },
+          { name:'Fire Type', value: field(f,'fireType').value || '—', inline:true },
+          { name:'Alarm Level', value: field(f,'alarmLevel').value || '—', inline:true },
+          { name:'Apparatus', value: (multiSelectToArray(field(f,'apparatus')).join(', ')||'—') },
+          { name:'Firefighters', value: (multiSelectToArray(field(f,'firefighters')).join(', ')||'—') },
+          { name:'Actions Taken', value: field(f,'actions').value || '—' },
+          { name:'Damage / Outcome', value: field(f,'outcome').value || '—' },
+          { name:'Water Supply', value: field(f,'water').value || '—', inline:true },
+          { name:'Cause', value: field(f,'cause').value || '—', inline:true },
+        ],
+        footer: footer(),
+      };
+      try{
+        await postToProxy(embed);
+        alert('Submitted to Discord.');
+        f.reset();
+      }catch(err){ alert('Submit failed: ' + err.message); }
+    });
+
+    document.getElementById('otherForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const f = e.currentTarget;
+      const embed = {
+        title: '📘 Other Incident Report',
+        color: 0x5DADEC,
+        fields: [
+          { name:'Incident #', value: field(f,'incidentNumber').value, inline:true },
+          { name:'Start', value: fmtDT(field(f,'startTime').value), inline:true },
+          { name:'End', value: fmtDT(field(f,'endTime').value), inline:true },
+          { name:'Location', value: field(f,'location').value || '—' },
+          { name:'Incident Type', value: field(f,'type').value || '—', inline:true },
+          { name:'Officer in Charge', value: field(f,'oic').value || '—', inline:true },
+          { name:'Apparatus', value: (multiSelectToArray(field(f,'apparatus')).join(', ')||'—') },
+          { name:'Personnel', value: (multiSelectToArray(field(f,'personnel')).join(', ')||'—') },
+          { name:'Narrative', value: field(f,'narrative').value || '—' },
+        ],
+        footer: footer(),
+      };
+      try{
+        await postToProxy(embed);
+        alert('Submitted to Discord.');
+        f.reset();
+      }catch(err){ alert('Submit failed: ' + err.message); }
+    });
+
+    document.getElementById('medicalForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const f = e.currentTarget;
+      const embed = {
+        title: '🏥 Medical Incident Report',
+        color: 0x86EFAC,
+        fields: [
+          { name:'Incident #', value: field(f,'incidentNumber').value, inline:true },
+          { name:'Start', value: fmtDT(field(f,'startTime').value), inline:true },
+          { name:'End', value: fmtDT(field(f,'endTime').value), inline:true },
+          { name:'Location', value: field(f,'location').value || '—' },
+          { name:'OIC / Lead', value: field(f,'oic').value || '—', inline:true },
+          { name:'Patient', value: `Age: ${field(f,'age').value || '—'} | Sex: ${field(f,'sex').value || '—'}`, inline:true },
+          { name:'Injuries / Illness', value: field(f,'injuries').value || '—' },
+          { name:'Treatment', value: field(f,'treatment').value || '—' },
+          { name:'Disposition', value: field(f,'disposition').value || '—', inline:true },
+          { name:'Receiving Facility', value: field(f,'facility').value || '—', inline:true },
+          { name:'Units / Personnel', value: (multiSelectToArray(field(f,'units')).join(', ')||'—') },
+          { name:'Narrative', value: field(f,'narrative').value || '—' },
+        ],
+        footer: footer(),
+      };
+      try{
+        await postToProxy(embed);
+        alert('Submitted to Discord.');
+        f.reset();
+      }catch(err){ alert('Submit failed: ' + err.message); }
+    });
+  </script>
 </body>
 </html>
